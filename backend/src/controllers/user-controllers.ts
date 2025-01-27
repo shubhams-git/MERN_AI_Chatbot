@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express"
 import User from "../models/User.js"
 import { hash } from "bcrypt"
+import { userSchema } from "../utils/types.js"
 
 export const getAllUsers = async(req:Request, res:Response, next: NextFunction)=>{
     try {
@@ -20,8 +21,21 @@ export const getAllUsers = async(req:Request, res:Response, next: NextFunction)=
 
 export const signUpUser = async (req:Request, res:Response, next: NextFunction)=>{
     try {
+
+        const result = userSchema.safeParse(req.body)
+        if (!result.success) {
+            return res.status(400).json({
+                message: "ERROR",
+                errors: result.error.errors,
+            });
+        }
         const {name, email, password} =req.body
-        console.log(req.body)
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({
+                message: "ERROR: A user with this email already exists",
+            });
+        }
 
         const hashedPass = await hash(password, 10);
 
@@ -33,9 +47,9 @@ export const signUpUser = async (req:Request, res:Response, next: NextFunction)=
         })
     } catch (error) {
         console.log(error)
-        return res.status(500).json({
+        return res.status(400).json({
             message: "ERROR",
-            err: error
+            error: error.message || "An unknown error occurred",
         })
     }
 }
