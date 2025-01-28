@@ -4,6 +4,7 @@ import './index.css'
 import App from './App.tsx'
 import { createTheme, ThemeProvider } from '@mui/material'
 import { BrowserRouter } from 'react-router'
+import { AuthProvider } from './context/AuthContext.tsx'
 
 const theme = createTheme({
   typography: {fontFamily: 'Roboto Slab, serif',
@@ -12,10 +13,12 @@ const theme = createTheme({
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    <AuthProvider>
     <BrowserRouter>
       <ThemeProvider theme={theme}>
         <App />
       </ThemeProvider>
     </BrowserRouter>
+    </AuthProvider>
   </StrictMode>,
 )
