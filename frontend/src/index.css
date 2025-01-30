@@ -14,8 +14,11 @@
     letter-spacing: 1px;
 }
 
-.MuiInputLabel-outlined-root.Mui-focused,
-.MuiInputLabel-notchedOutline{
+.MuiInputLabel, 
+.MuiInput-input {
     color: white !important;
+}
 
+.MuiOutlinedInput-notchedOutline {
+    color: white !important;
 }
