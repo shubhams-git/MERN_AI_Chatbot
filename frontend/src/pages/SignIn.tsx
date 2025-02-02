@@ -2,12 +2,29 @@ import { Box, Button, Typography } from "@mui/material"
 import CustomizedInput from "../components/shared/CustomizedInput"
 import { IoLogInOutline } from "react-icons/io5"
 import React from "react"
+import axios from "axios"
+import { AuthProvider, useAuth } from "../context/AuthContext"
+import toast from "react-hot-toast"
+axios.defaults.baseURL = "http://localhost:5000/api/v1"
+axios.defaults.withCredentials = true
 
 const SignIn = () => {
-  const handleSubmit = (e:React.FormEvent<HTMLFormElement>)=>{
+  const auth = useAuth();
+  const handleSubmit = async (e:React.FormEvent<HTMLFormElement>)=>{
     e.preventDefault();
     const data = new FormData(e.currentTarget);
-    console.log(data.get("email"), data.get("password"));
+    const email = data.get("email")?.toString() as string;
+    const password = data.get("password")?.toString() as string;
+    console.log(email, password);
+    try{
+      toast.loading("Signing In...", {id: "signin"});
+      await auth?.signIn(email, password);
+      toast.dismiss();
+      toast.success("Signed In Successfully");
+    }catch(err){
+      toast.dismiss();
+      toast.error("Sign In Failed", {id: "failed"});
+    }
   }
 
   return (
