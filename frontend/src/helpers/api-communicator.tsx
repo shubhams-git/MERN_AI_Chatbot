@@ -9,3 +9,13 @@ export const signInUser = async(email: string, password:string)=>{
         return result;
     }
 }
+
+export const checkAuthStatus = async()=>{
+    const res = await axios.get("/user/auth-status")
+    if(res.status !== 200){
+        return "ERROR"
+    }else{
+        const data = await res.data
+        return data;
+    }
+}

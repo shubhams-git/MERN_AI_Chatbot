@@ -119,4 +119,40 @@ export const signInUser = async(req: Request, res: Response, next: NextFunction)
         });
     }
 }
+
+export const verifyUser = async(req: Request, res: Response, next: NextFunction)=>{
+    try {
+        const prom =(ms)=> new Promise((resolve,reject)=>{
+            setTimeout(()=>{resolve("Finished")},ms)
+        })
+        await prom(2000);
+
+        const user = await User.findById(res.locals.jwtData.id)
+        if (!user){
+            console.log("user is: "+ user)
+            return res.status(401).json({
+                message: "Unauthorized Access"
+            });
+        }
+
+        if(user._id.toString() !== res.locals.jwtData.id){
+            return res.status(401).json({
+                message: "Unauthorized Access- Permissions did not match"
+            });
+        }
+
+        return res.status(200).json({
+            message: "OK",
+            name: user.name,
+            email: user.email
+        });
+        
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            message: "Internal Server Error",
+            cause: error.message || "An unknown error occurred",
+        });
+    }
+}
  
