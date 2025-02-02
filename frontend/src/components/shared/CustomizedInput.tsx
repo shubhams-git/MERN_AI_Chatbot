@@ -1,4 +1,3 @@
-import React from 'react';
 import TextField from '@mui/material/TextField';
 
 interface Props {
@@ -18,25 +17,34 @@ const CustomizedInput = (props: Props) => {
         width: 400,
         mt: 2,
         borderRadius: 2,
-        color: 'white',
+        color: "white",
         fontSize: 12,
-        "& .MuiOutlinedInput-notchedOutline": {
-          borderColor: "white",
-          borderWidth: "2px",
-        },
-        "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-          borderColor: "white",
+        "& .MuiOutlinedInput-root": {
+          "& fieldset": {
+            borderColor: "white", 
+            borderWidth: "2px",
+          },
+          "&:hover fieldset": {
+            borderColor: "white",  
+          },
+          "&.Mui-focused fieldset": {
+            borderColor: "white",  
+          },
         },
         "& .MuiInputLabel-root": {
           color: "white",
         },
-        "& .Mui-focused .MuiInputLabel-root": {
+        "& .MuiInputLabel-root.Mui-focused": {
           color: "white",
         },
+        "& .MuiInputBase-root":{
+          color: "white",
+        }
       }}
       margin="normal"
     />
   );
 };
+
 
 export default CustomizedInput;

@@ -13,12 +13,3 @@
     text-decoration: none;
     letter-spacing: 1px;
 }
-
-.MuiInputLabel, 
-.MuiInput-input {
-    color: white !important;
-}
-
-.MuiOutlinedInput-notchedOutline {
-    color: white !important;
-}
