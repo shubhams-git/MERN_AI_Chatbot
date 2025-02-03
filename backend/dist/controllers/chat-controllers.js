@@ -22,7 +22,7 @@ const generateChatCompletion = async (req, res, next) => {
         const aiResponse = completion.choices[0].message.content || "Sorry, I could not generate a response at this time.";
         user.chats.push({ role: "assistant", content: aiResponse });
         await user.save();
-        return res.status(200).json({ response: aiResponse });
+        return res.status(200).json({ chats: user.chats });
     }
     catch (error) {
         console.log(error);
