@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import { randomUUID } from "crypto";
-import { defaultMaxListeners } from "events";
 
 const chatSchema = new mongoose.Schema({
     id:{
@@ -11,7 +10,7 @@ const chatSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    parts: {
+    content: {
         type: String,
         required: true
     }

@@ -10,4 +10,7 @@ export const signInSchema = z.object({
     password: z.string({ required_error: "The password is mandatory" })
         .min(6, "Password must be atleast 6 letters")
 });
+export const chatSchema = z.object({
+    message: z.string({ required_error: "The message is mandatory" })
+});
 //# sourceMappingURL=types.js.map

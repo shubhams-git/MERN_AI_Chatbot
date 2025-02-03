@@ -74,9 +74,6 @@ export const signInUser = async (req, res, next) => {
             });
         }
         const isMatched = await compare(password, user.password);
-        console.log(`isMatched is: ${isMatched}, 
-            hashedPass is  ${password},
-            Pass from DB is ${user.password}`);
         if (!isMatched) {
             return res.status(401).json({
                 message: "Unauthorized Access"
@@ -118,7 +115,6 @@ export const verifyUser = async (req, res, next) => {
         await prom(2000);
         const user = await User.findById(res.locals.jwtData.id);
         if (!user) {
-            console.log("user is: " + user);
             return res.status(401).json({
                 message: "Unauthorized Access"
             });

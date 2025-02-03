@@ -7,7 +7,6 @@ export const createToken = (id, email) => {
 };
 export const verifyToken = async (req, res, next) => {
     const token = req.signedCookies[COOKIE_NAME];
-    console.log("Token is: " + token);
     if (!token || token.trim() === "") {
         return res.status(401).json({
             message: "Unauthorized Access, No token found"
@@ -22,10 +21,8 @@ export const verifyToken = async (req, res, next) => {
                         message: "Unauthorized Access"
                     });
                 }
-                console.log("Token verified");
                 resolve();
                 res.locals.jwtData = decoded;
-                console.log("Decoded data is: " + JSON.stringify(decoded));
                 return next();
             });
         }
