@@ -28,6 +28,7 @@ export const verifyToken = async (req:Request, res:Response, next:NextFunction)=
             }
             resolve();
             res.locals.jwtData = decoded
+            console.log("Reached and verified token")
             return next()
         })
     }})

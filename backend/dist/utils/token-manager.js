@@ -23,6 +23,7 @@ export const verifyToken = async (req, res, next) => {
                 }
                 resolve();
                 res.locals.jwtData = decoded;
+                console.log("Reached and verified token");
                 return next();
             });
         }
