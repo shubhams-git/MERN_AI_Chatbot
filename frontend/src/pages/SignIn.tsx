@@ -1,14 +1,16 @@
 import { Box, Button, Typography } from "@mui/material"
 import CustomizedInput from "../components/shared/CustomizedInput"
 import { IoLogInOutline } from "react-icons/io5"
-import React from "react"
+import React, { useEffect } from "react"
 import axios from "axios"
 import { AuthProvider, useAuth } from "../context/AuthContext"
 import toast from "react-hot-toast"
+import { useNavigate } from "react-router"
 axios.defaults.baseURL = "http://localhost:5000/api/v1"
 axios.defaults.withCredentials = true
 
 const SignIn = () => {
+  const nav = useNavigate()
   const auth = useAuth();
   const handleSubmit = async (e:React.FormEvent<HTMLFormElement>)=>{
     e.preventDefault();
@@ -21,19 +23,25 @@ const SignIn = () => {
       await auth?.signIn(email, password);
       toast.dismiss();
       toast.success("Signed In Successfully");
+      nav("/chat");
     }catch(err){
       toast.dismiss();
       toast.error("Sign In Failed", {id: "failed"});
     }
   }
+  useEffect(()=>{
+    if(auth?.isSignedIn || auth?.user){
+      nav("/chat");
+    }
+  },[auth]);
 
   return (
     <>
       <Box width={"100%"} height={"100%"} display={"flex"} flex={1} >
-        <Box padding={8} mt={8} display={{md:"flex", sm:"none", xs: "none"}}>
-          <img src="airobot.png" alt="Robot" width={"300px"} />
+        <Box padding={8} mt={8} ml={10} display={{md:"flex", sm:"none", xs: "none"}}>
+          <img src="airobot.png" alt="Robot" width={"350px"} />
         </Box>
-        <Box padding={2} ml={"auto"} mt={16} display={"flex"} flex={{xs:1, md:0.5}} justifyContent={"center"} alignItems={"center"}>
+        <Box padding={2} ml={"auto"} mt={12} display={"flex"} flex={{xs:1, md:0.5}} justifyContent={"center"} alignItems={"center"}>
           <form 
           onSubmit={handleSubmit} 
           style={{

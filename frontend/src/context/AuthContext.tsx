@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
-import { checkAuthStatus, signInUser } from "../helpers/api-communicator";
+import { checkAuthStatus, signInUser, signOutUser } from "../helpers/api-communicator";
 
 type User = {
     name: string;
@@ -39,7 +39,15 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
         setUser({name: data.name, email: data.email});
         setIsSignedIn(true);
     };
-    const signOut = async () => {}; 
+    const signOut = async () => {
+        const response = await signOutUser();   
+        if(response === "ERROR"){
+            console.log("Error in Sign Out");
+        }
+        setUser(null);
+        setIsSignedIn(false);
+        window.location.reload();
+    }; 
 
     const value = {
         user,

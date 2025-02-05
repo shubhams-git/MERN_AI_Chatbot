@@ -52,3 +52,14 @@ export const deleteAllChats = async()=>{
         return "OK"
     }
 }
+
+export const signOutUser = async()=>{
+    console.log("Reached here")
+    const res = await axios.get("/user/signout")
+    if(res.status !== 200){
+        console.log(res)
+        return "ERROR"
+    }else{
+        return "OK"
+    }
+}

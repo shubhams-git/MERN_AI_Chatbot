@@ -138,4 +138,41 @@ export const verifyUser = async (req, res, next) => {
         });
     }
 };
+export const signOutUser = async (req, res, next) => {
+    try {
+        const prom = (ms) => new Promise((resolve, reject) => {
+            setTimeout(() => { resolve("Finished"); }, ms);
+        });
+        await prom(1000);
+        console.log("Reached Signout");
+        const user = await User.findById(res.locals.jwtData.id);
+        if (!user) {
+            return res.status(401).json({
+                message: "Unauthorized Access"
+            });
+        }
+        if (user._id.toString() !== res.locals.jwtData.id) {
+            return res.status(401).json({
+                message: "Unauthorized Access- Permissions did not match"
+            });
+        }
+        res.clearCookie(COOKIE_NAME, {
+            path: "/",
+            domain: COOKIE_DOMAIN,
+            httpOnly: true,
+            signed: true
+        });
+        console.log("Cleared the cookie");
+        return res.status(200).json({
+            message: "OK",
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Internal Server Error",
+            cause: error.message || "An unknown error occurred",
+        });
+    }
+};
 //# sourceMappingURL=user-controllers.js.map

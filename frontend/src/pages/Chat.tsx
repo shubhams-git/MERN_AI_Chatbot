@@ -6,6 +6,7 @@ import { IoMdSend } from "react-icons/io";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { deleteAllChats, getAllChats, sendChatRequest } from "../helpers/api-communicator";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router";
 
 type Message = {
     role: "user" | "assistant";
@@ -14,6 +15,7 @@ type Message = {
 
 const Chat = () => {
     const auth = useAuth()
+    const nav = useNavigate()
     const [messages, setMessages] = useState<Message[] | null>([]);
     const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -35,7 +37,7 @@ const Chat = () => {
 
             fetchChats();
     }
-    }, []);
+    }, [auth]);
 
 const handleSubmit = async () => {
     if (inputRef.current) {
@@ -62,6 +64,13 @@ const handleClearConversation = async () => {
         toast.error("Failed to clear the conversation.", {id:"delete chat"});        
     }
 }
+
+useEffect(()=>{
+    if(!auth?.signIn || !auth?.user){
+        nav("/signin")
+    }
+},[auth])
+
 
 return (
     <Box
