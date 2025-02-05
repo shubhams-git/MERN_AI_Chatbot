@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
-import { checkAuthStatus, signInUser, signOutUser } from "../helpers/api-communicator";
+import { checkAuthStatus, signInUser, signOutUser, signUpUser } from "../helpers/api-communicator";
 
 type User = {
     name: string;
@@ -30,7 +30,13 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
         checkStatus();  
         }, []);
     
-    const signUp = async (name: string, email: string, password: string) => {};
+    const signUp = async (name: string, email: string, password: string) => {
+        const data = await signUpUser(name, email, password);
+        if(data==="ERROR"){
+            console.log("Error in Sign Up")
+        }
+        setUser({name: data.name, email: data.email});
+    };
     const signIn = async (email: string, password: string) => {
         const data = await signInUser(email, password);
         if(data==="ERROR"){

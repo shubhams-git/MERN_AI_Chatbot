@@ -2,6 +2,28 @@
     filter: invert(100%);
 }
 
+.rotate {
+    filter: drop-shadow(0 0 8px rgba(100, 243, 213, 0.6)) drop-shadow(0 0 15px rgba(100, 243, 213, 0.4));
+    animation: rotation 5s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg) scale(0.9);
+        opacity: 1;
+    }
+    50% {
+        transform: rotate(180deg) scale(0.7);
+        opacity: 0.8;
+    }
+    100% {
+        transform: rotate(360deg) scale(0.9);
+        opacity: 1;
+    }
+}
+
+
 
 .nav-link{
     font-weight: 600;

@@ -91,7 +91,7 @@ export const ChatItem = ({
       }}
     >
       <Avatar sx={{ ml: 0 }}>
-        <img src="/openai.png" alt="openai" style={{ width: 30 }} />
+        <img src="/meta.svg" className= "image-inverted" alt="openai" style={{ width: 30 }} />
       </Avatar>
       <Box>
         {messageBlocks.length === 1 && !messageBlocks[0].isCode ? (

@@ -30,7 +30,7 @@ const SignIn = () => {
     }
   }
   useEffect(()=>{
-    if(auth?.isSignedIn || auth?.user){
+    if(auth?.isSignedIn && auth?.user){
       nav("/chat");
     }
   },[auth]);

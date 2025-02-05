@@ -93,7 +93,7 @@ return (
                 sx={{
                     display: 'flex',
                     width: '100%',
-                    height: '70vh',
+                    height: '90vh',
                     bgcolor: 'rgb(17,29,39)',
                     borderRadius: 5,
                     flexDirection: 'column',
