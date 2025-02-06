@@ -30,7 +30,7 @@ const Home = () => {
             my: 2,
           }}
         >
-          {!isBelowMd && ( // Conditionally render the robot image
+          {!isBelowMd && (
             <img
               src="robot.png"
               alt="Robot"

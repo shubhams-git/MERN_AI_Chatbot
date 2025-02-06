@@ -20,206 +20,210 @@ const Chat = () => {
     const inputRef = useRef<HTMLInputElement | null>(null);
 
     useLayoutEffect(() => {
-        if (auth?.signIn && auth.user) {
-            const id = "loading-chats"; // Unique ID for this toast
-            const loadingToast = toast.loading("Loading Chats...", { id });
+        if (auth?.signIn && auth.user) { 
+            toast.loading("Loading Chats...", { id:"loading-chats" });
 
             const fetchChats = async () => {
                 try {
                     const data = await getAllChats();
                     setMessages(data.chats);
-                    toast.success("Chats Loaded...", { id });
+                    toast.success("Chats Loaded...", { id:"loading-chats" });
                 } catch (error) {
                     console.error("Error fetching chats:", error);
-                    toast.error("Failed to load chats.", { id });
+                    toast.error("Failed to load chats.", { id:"loading-chats" });
                 }
             };
 
             fetchChats();
-    }
+        }
     }, [auth]);
 
-const handleSubmit = async () => {
-    if (inputRef.current) {
-        const message = inputRef.current.value;
-        if (message.trim() !== "") {
-            const response = await sendChatRequest(message);
-            console.log(response)
-            setMessages([...response.chats]);
-            inputRef.current.value = "";
+    const handleSubmit = async () => {
+        if (inputRef.current) {
+            const message = inputRef.current.value;
+            if (message.trim() !== "") {
+                const response = await sendChatRequest(message);
+                console.log(response)
+                setMessages([...response.chats]);
+                inputRef.current.value = "";
+            }
         }
     }
-}
 
-const handleClearConversation = async () => {
-    toast.loading("Deleting the chats...", {id:"delete chat"});
-    try {
-        const response = await deleteAllChats();
-        if (response === "OK") {
-        setMessages([]);
-        toast.success("Conversation cleared successfully.", {id:"delete chat"});
+    const handleClearConversation = async () => {
+        toast.loading("Deleting the chats...", { id: "delete chat" });
+        try {
+            const response = await deleteAllChats();
+            if (response === "OK") {
+                setMessages([]);
+                toast.success("Conversation cleared successfully.", { id: "delete chat" });
+            }
+        } catch (error) {
+            console.error("Error deleting chats:", error);
+            toast.error("Failed to clear the conversation.", { id: "delete chat" });
+        }
     }
-    } catch (error) {
-        console.error("Error deleting chats:", error);
-        toast.error("Failed to clear the conversation.", {id:"delete chat"});        
-    }
-}
 
-useEffect(()=>{
-    if(!auth?.signIn || !auth?.user){
-        nav("/signin")
-    }
-},[auth])
+    useEffect(() => {
+        if (!auth?.signIn || !auth?.user) {
+            nav("/signin")
+        }
+    }, [auth])
 
 
-return (
-    <Box
-        sx={{
-            display: 'flex',
-            flex: 1,
-            width: '100%',
-            height: '100%',
-            mt: 3,
-            gap: 3
-        }}
-    >
+    return (
         <Box
             sx={{
-                display: { md: 'flex', sm: 'none', xs: 'none' },
-                flex: 0.2,
-                flexDirection: 'column',
-            }}>
+                display: 'flex',
+                flex: 1,
+                width: '100%',
+                height: '100%',
+                mt: 3,
+                gap: 3
+            }}
+        >
             <Box
                 sx={{
-                    display: 'flex',
-                    width: '100%',
-                    height: '90vh',
-                    bgcolor: 'rgb(17,29,39)',
-                    borderRadius: 5,
+                    display: { md: 'flex', sm: 'none', xs: 'none' },
+                    flex: 0.2,
                     flexDirection: 'column',
-                    mx: 3,
                 }}>
-                <Avatar
+                <Box
                     sx={{
-                        mx: 'auto',
-                        my: 2,
-                        bgcolor: "white",
-                        color: 'black',
-                        fontWeight: 700
-                    }}>{auth?.user?.name[0]}{auth?.user?.name.split(" ")[1][0]}
-                </Avatar>
-                <Typography
-                    sx={{
-                        mx: 'auto',
-                        fontFamily: 'work sans',
+                        display: 'flex',
+                        width: '100%',
+                        height: '90vh',
+                        bgcolor: 'rgb(17,29,39)',
+                        borderRadius: 5,
+                        flexDirection: 'column',
+                        mx: 3,
                     }}>
-                    You are talking to a ChatBOT
-                </Typography>
+                    <Avatar
+                        sx={{
+                            mx: 'auto',
+                            my: 2,
+                            bgcolor: "white",
+                            color: 'black',
+                            fontWeight: 700
+                        }}>{auth?.user?.name[0]}{auth?.user?.name.split(" ")[1][0]}
+                    </Avatar>
+                    <Typography
+                        sx={{
+                            mx: 'auto',
+                            fontFamily: 'work sans',
+                        }}>
+                        You are talking to a ChatBOT
+                    </Typography>
+                    <Typography
+                        sx={{
+                            mx: 'auto',
+                            fontFamily: 'work sans',
+                            textAlign: 'center',
+                            my: 4,
+                            p: 3
+                        }}>
+                        Hey there! I’m your friendly chatbot, here to help, chat, and maybe even crack a joke or two. <br />
+                        Ask me anything—news, weather, random trivia… or just how my day’s going (spoiler: it’s always great!).
+                    </Typography>
+                    <Button
+                        onClick={handleClearConversation}
+                        sx={{
+                            width: 200,
+                            my: 'auto',
+                            mx: 'auto',
+                            color: 'white',
+                            fontWeight: 700,
+                            borderRadius: 3,
+                            bgcolor: red[400],
+                            ":hover": {
+                                bgcolor: red.A400,
+
+                            }
+                        }}>
+                        Clear Conversation
+                    </Button>
+                </Box>
+            </Box>
+            <Box
+                sx={{
+                    display: "flex",
+                    flex: { md: 0.8, sm: 1, xs: 1 },
+                    flexDirection: 'column',
+                    padding: 3
+                }}>
                 <Typography
                     sx={{
-                        mx: 'auto',
-                        fontFamily: 'work sans',
                         textAlign: 'center',
-                        my: 4,
-                        p: 3
-                    }}>
-                    Hey there! I’m your friendly chatbot, here to help, chat, and maybe even crack a joke or two. <br />
-                    Ask me anything—news, weather, random trivia… or just how my day’s going (spoiler: it’s always great!).
-                </Typography>
-                <Button
-                    onClick={handleClearConversation}
-                    sx={{
-                        width: 200,
-                        my: 'auto',
-                        mx: 'auto',
+                        fontSize: 30,
                         color: 'white',
-                        fontWeight: 700,
-                        borderRadius: 3,
-                        bgcolor: red[400],
-                        ":hover": {
-                            bgcolor: red.A400,
-
-                        }
+                        mx: 'auto',
+                        mb: 2,
+                        fontWeight: 600,
                     }}>
-                    Clear Conversation
-                </Button>
-            </Box>
-        </Box>
-        <Box
-            sx={{
-                display: "flex",
-                flex: { md: 0.8, sm: 1, xs: 1 },
-                flexDirection: 'column',
-                padding: 3
-            }}>
-            <Typography
-                sx={{
-                    textAlign: 'center',
-                    fontSize: 30,
-                    color: 'white',
-                    mx: 'auto',
-                    mb: 2,
-                    fontWeight: 600,
-                }}>
-                Model- Llama-3.1 (405B)
-            </Typography>
-            <Box
-                sx={{
-                    width: '100%',
-                    height: '60vh',
-                    borderRadius: 3,
-                    mx: 'auto',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    overflow: 'scroll',
-                    overflowX: 'hidden',
-                    scrollBehavior: 'smooth',
-                }}>
-                {messages?.map((message, index) => (
-                    <ChatItem role={message.role} content={message.content} key={index} />
-                ))}
-            </Box>
-            <div style={{
-                width: "100%",
-                maxWidth: "100%",
-                borderRadius: 8,
-                padding: 20,
-                borderColor: "white",
-                paddingLeft: 10,
-                backgroundColor: "rgb(17,29,39)",
-                display: "flex",
-                marginRight: "auto",
-                margin: "auto",
-                boxSizing: "border-box",
-            }}>
-                {" "}
-                <input
-                    ref={inputRef}
-                    type="text"
-                    style={{
-                        flex: 1,
-                        width: "100%",
-                        backgroundColor: "transparent",
-                        padding: 10,
-                        border: "none",
-                        outline: "none",
-                        color: "white",
-                        fontSize: 20
-                    }}
-                    placeholder="Type a message..."
-                />
-                <IconButton
-                    onClick={handleSubmit}
+                    Model- Llama-3.1 (405B)
+                </Typography>
+                <Box
                     sx={{
-                        color: "white",
-                        ml: "auto"
+                        width: '100%',
+                        height: '60vh',
+                        borderRadius: 3,
+                        mx: 'auto',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        overflowY: 'scroll',
+                        overflowX: 'hidden',
+                        scrollBehavior: 'smooth',
+                        '&::-webkit-scrollbar': {
+                            display: 'none', // Hides scrollbar in Chrome, Safari, Edge
+                        },
+                        scrollbarWidth: 'none', // Hides scrollbar in Firefox
                     }}>
-                    <IoMdSend></IoMdSend>
-                </IconButton>
-            </div>
+                    {messages?.map((message, index) => (
+                        <ChatItem role={message.role} content={message.content} key={index} />
+                    ))}
+                </Box>
+
+                <div style={{
+                    width: "100%",
+                    maxWidth: "100%",
+                    borderRadius: 8,
+                    padding: 20,
+                    borderColor: "white",
+                    paddingLeft: 10,
+                    backgroundColor: "rgb(17,29,39)",
+                    display: "flex",
+                    marginRight: "auto",
+                    margin: "auto",
+                    boxSizing: "border-box",
+                }}>
+                    {" "}
+                    <input
+                        ref={inputRef}
+                        type="text"
+                        style={{
+                            flex: 1,
+                            width: "100%",
+                            backgroundColor: "transparent",
+                            padding: 10,
+                            border: "none",
+                            outline: "none",
+                            color: "white",
+                            fontSize: 20
+                        }}
+                        placeholder="Type a message..."
+                    />
+                    <IconButton
+                        onClick={handleSubmit}
+                        sx={{
+                            color: "white",
+                            ml: "auto"
+                        }}>
+                        <IoMdSend></IoMdSend>
+                    </IconButton>
+                </div>
+            </Box>
         </Box>
-    </Box>
-)
+    )
 }
 
 export default Chat

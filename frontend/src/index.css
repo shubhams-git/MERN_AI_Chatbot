@@ -3,7 +3,7 @@
 }
 
 .rotate {
-    filter: drop-shadow(0 0 8px rgba(100, 243, 213, 0.6)) drop-shadow(0 0 15px rgba(100, 243, 213, 0.4));
+    filter: drop-shadow(0 0 8px rgba(100, 243, 213, 0.6)) drop-shadow(0 0 15px rgba(100, 243, 213, 0.4));   
     animation: rotation 5s infinite cubic-bezier(0.4, 0, 0.2, 1);
     transform-origin: center;
 }
@@ -35,3 +35,4 @@
     text-decoration: none;
     letter-spacing: 1px;
 }
+

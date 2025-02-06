@@ -10,7 +10,7 @@ const Logo = () => {
         gap:"8px"
     }}>
         <Link to={"/"}>
-            <img src="router.svg" alt="OpenAI" width={"30px"} height={"30px"} style={{marginTop:"6px"}} className="image-inverted" />
+            <img src="router.svg" alt="OpenRouter" width={"50px"} height={"50px"} style={{marginTop:"6px"}} className="image-inverted" />
         </Link>
         <Typography sx={{ 
                 display:{md:"inline-block", sm: "none", xs: "none"},

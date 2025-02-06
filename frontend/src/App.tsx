@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import Chat from './pages/Chat'
 import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
+import Footer from './components/footer/Footer'
 function App() {
   return <div>
     <Header />
@@ -15,6 +16,7 @@ function App() {
       <Route path="/signup" element={<SignUp />} />
       <Route path='*' element={<div>Not Found</div>} />
     </Routes>
+    <Footer/>
   </div>
 }
 
