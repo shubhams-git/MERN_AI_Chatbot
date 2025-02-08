@@ -1,9 +1,12 @@
-import { Avatar, Box, Typography } from "@mui/material";
+import { Avatar, Box, Typography, Paper } from "@mui/material";
 import { useAuth } from "../../context/AuthContext";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { coldarkDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+
+// Function to check if content is markdown or plain text
+const isMarkdown = (text: string) => /[#*_`\-]/.test(text);
 
 // Function to split content into text and code blocks
 function extractCode(message: string) {
@@ -35,7 +38,7 @@ const MarkdownRenderer = ({ content }: { content: string }) => (
         </Typography>
       ),
       p: ({ children }) => (
-        <Typography fontSize={20} lineHeight="1.6" gutterBottom>
+        <Typography fontSize={18} lineHeight="1.8" gutterBottom>
           {children}
         </Typography>
       ),
@@ -45,7 +48,7 @@ const MarkdownRenderer = ({ content }: { content: string }) => (
         </Box>
       ),
       li: ({ children }) => (
-        <Typography component="li" fontSize={20} lineHeight="1.6" gutterBottom>
+        <Typography component="li" fontSize={18} lineHeight="1.8" gutterBottom>
           {children}
         </Typography>
       ),
@@ -79,57 +82,77 @@ export const ChatItem = ({
 }) => {
   const auth = useAuth();
   const messageBlocks = extractCode(content);
+  const userInitials = auth?.user?.name
+    ? `${auth.user.name[0]}${auth.user.name.split(" ")[1]?.[0] || ""}`
+    : "U";
 
-  return role === "assistant" ? (
+  return (
     <Box
       sx={{
         display: "flex",
         p: 2,
-        bgcolor: "#004d5612",
-        my: 2,
+        my: 1,
         gap: 2,
+        flexDirection: role === "user" ? "row-reverse" : "row",
       }}
     >
-      <Avatar sx={{ ml: 0 }}>
-        <img src="/meta.svg" className= "image-inverted" alt="openai" style={{ width: 30 }} />
+      {/* Avatar */}
+      <Avatar
+        sx={{
+          bgcolor: role === "user" ? "black" : "#004d5612",
+          color: role === "user" ? "white" : "black",
+        }}
+      >
+        {role === "user" ? userInitials : <img src="/meta.svg" className="image-inverted" alt="openai" style={{ width: 30 }} />}
       </Avatar>
-      <Box>
+
+      {/* Message Box */}
+      <Paper
+        elevation={3}
+        sx={{
+          p: 2,
+          maxWidth: "80%",
+          bgcolor:  "#004d56", 
+          color: role === "user" ? "white" : "black",
+          borderRadius: 2,
+        }}
+      >
+        {/* If message contains markdown, render MarkdownRenderer, otherwise improve readability */}
         {messageBlocks.length === 1 && !messageBlocks[0].isCode ? (
-          <MarkdownRenderer content={content} />
+          isMarkdown(content) ? (
+            <MarkdownRenderer content={content} />
+          ) : (
+            <Typography
+              fontSize={18}
+              lineHeight="1.8"
+              sx={{ whiteSpace: "pre-line", wordBreak: "break-word" }}
+            >
+              {content}
+            </Typography>
+          )
         ) : (
           messageBlocks.map((block, index) =>
             block.isCode ? (
-              <SyntaxHighlighter
-                key={index}
-                style={coldarkDark}
-                language="javascript"
-              >
+              <SyntaxHighlighter key={index} style={coldarkDark} language="javascript">
                 {block.content}
               </SyntaxHighlighter>
             ) : (
-              <MarkdownRenderer key={index} content={block.content} />
+              isMarkdown(block.content) ? (
+                <MarkdownRenderer key={index} content={block.content} />
+              ) : (
+                <Typography
+                  key={index}
+                  fontSize={18}
+                  lineHeight="1.8"
+                  sx={{ whiteSpace: "pre-line", wordBreak: "break-word" }}
+                >
+                  {block.content}
+                </Typography>
+              )
             )
           )
         )}
-      </Box>
-    </Box>
-  ) : (
-    <Box
-      sx={{
-        display: "flex",
-        p: 2,
-        my: 0.5,
-        bgcolor: "#004d56",
-        gap: 2,
-      }}
-    >
-      <Avatar sx={{ ml: 0, bgcolor: "black", color: "white" }}>
-        {auth?.user?.name[0]}
-        {auth?.user?.name.split(" ")[1][0]}
-      </Avatar>
-      <Box>
-        <Typography fontSize={20}>{content}</Typography>
-      </Box>
+      </Paper>
     </Box>
   );
 };

@@ -92,7 +92,7 @@ const Chat = () => {
                     sx={{
                         display: 'flex',
                         width: '100%',
-                        height: '90vh',
+                        height: '60vh',
                         bgcolor: 'rgb(17,29,39)',
                         borderRadius: 5,
                         flexDirection: 'column',
@@ -160,7 +160,7 @@ const Chat = () => {
                         mb: 2,
                         fontWeight: 600,
                     }}>
-                    Model- Llama-3.1 (405B)
+                    Model- Gemini 2.0 Flash
                 </Typography>
                 <Box
                     sx={{
