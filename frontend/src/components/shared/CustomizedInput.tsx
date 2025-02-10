@@ -39,12 +39,20 @@ const CustomizedInput = (props: Props) => {
         },
         "& .MuiInputBase-root":{
           color: "white",
-        }
+        },
+        // Override autofill styles
+        "& input:-webkit-autofill": {
+          WebkitBoxShadow: "0 0 0 1000px #121212 inset", 
+          WebkitTextFillColor: "white", 
+        },
+        "& input:-webkit-autofill:hover, & input:-webkit-autofill:focus": {
+          WebkitBoxShadow: "0 0 0 1000px #121212 inset", 
+          WebkitTextFillColor: "white", 
+        },
       }}
       margin="normal"
     />
   );
 };
-
 
 export default CustomizedInput;

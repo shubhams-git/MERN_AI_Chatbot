@@ -176,7 +176,6 @@ export const signOutUser = async(req: Request, res: Response, next: NextFunction
 
         res.clearCookie(COOKIE_NAME,{
             path: "/",
-            domain: COOKIE_DOMAIN,
             httpOnly: true,
             signed:true
         })
