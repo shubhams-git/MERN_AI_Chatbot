@@ -95,7 +95,6 @@ export const signInUser = async(req: Request, res: Response, next: NextFunction)
             signed: true
         });
         const token = createToken(user._id.toString(), user.email)
-        console.log(token)
         res.cookie(COOKIE_NAME, token, {
             path: "/",
             maxAge: COOKIE_AGE,
@@ -104,7 +103,6 @@ export const signInUser = async(req: Request, res: Response, next: NextFunction)
             httpOnly: true,
             signed: true,
         });
-        console.log(res.cookie[COOKIE_NAME])        
         return res.status(200).json({
             message: "OK",
             name: user.name,
