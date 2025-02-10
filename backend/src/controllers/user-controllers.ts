@@ -89,20 +89,18 @@ export const signInUser = async(req: Request, res: Response, next: NextFunction)
                 message: "Unauthorized Access"
             });            
         }
-        res.clearCookie(COOKIE_NAME,{
+        res.clearCookie(COOKIE_NAME, {
             path: "/",
-            domain: COOKIE_DOMAIN,
             httpOnly: true,
-            signed:true
-        })
+            signed: true
+        });
         const token = createToken(user._id.toString(), user.email)
         console.log(token)
         res.cookie(COOKIE_NAME, token, {
             path: "/",
-            domain: "rizz-bot-ai.vercel.app",  // Set this to your frontend domain
             maxAge: COOKIE_AGE,
-            sameSite: "none",  // Required for cross-site cookies
-            secure: true,      // Ensure cookies are sent over HTTPS
+            sameSite: "none",
+            secure: true,
             httpOnly: true,
             signed: true,
         });
