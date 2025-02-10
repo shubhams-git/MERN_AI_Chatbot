@@ -31,8 +31,8 @@ export const checkAuthStatus = async()=>{
     }
 }
 
-export const sendChatRequest = async(message: string)=>{
-    const res = await axios.post("/chat/new", {message})
+export const sendChatRequest = async(message: string, modelId: string)=>{
+    const res = await axios.post("/chat/new", {message, modelId})
     if(res.status !== 200){
         console.log(res)
         return "ERROR"

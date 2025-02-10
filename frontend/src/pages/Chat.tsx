@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { LoadingResponse } from "../components/chat/LoadingResponse";
 
+
 type Message = {
     role: "user" | "assistant";
     content: string;
@@ -21,13 +22,15 @@ type Model = {
 };
 
 const MODELS: Model[] = [
-    { id: 'gemini-flash-2', provider: 'Google', name: 'Gemini Flash 2.0' },
-    { id: 'gemini-flash-lite', provider: 'Google', name: 'Gemini Flash Lite 2.0' },
-    { id: 'qwen-2.5-vl', provider: 'Qwen', name: 'Qwen2.5 VL' },
-    { id: 'deepseek-r1', provider: 'DeepSeek', name: 'DeepSeek R1' },
-    { id: 'llama-3.1', provider: 'NVIDIA', name: 'Llama 3.1' },
-    { id: 'gemini-pro-2', provider: 'Google', name: 'Gemini Pro 2.0' },
+    { id: 'gemini-2.0-flash', provider: 'Google', name: 'Gemini Flash 2.0' },
+    { id: 'gemini-2.0-flash-lite-preview-02-05', provider: 'Google', name: 'Gemini Flash Lite 2.0' },
+    { id: 'qwen/qwen2.5-vl-72b-instruct:free', provider: 'Qwen', name: 'Qwen2.5 VL' },
+    { id: 'deepseek/deepseek-r1:free', provider: 'DeepSeek', name: 'DeepSeek R1' },
+    { id: 'nvidia/llama-3.1-nemotron-70b-instruct:free', provider: 'NVIDIA', name: 'Llama 3.1' },
+    { id: 'google/gemini-2.0-pro-exp-02-05:free', provider: 'Google', name: 'Gemini Pro 2.0' },
+    { id: 'meta-llama/llama-3.3-70b-instruct:free', provider: 'Meta', name: 'Llama 3.3' },
 ];
+
 
 const Chat = () => {
     const auth = useAuth()
@@ -86,7 +89,7 @@ const Chat = () => {
     const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const lineHeight = 24;
         const previousRows = e.target.rows;
-        e.target.rows = 1; 
+        e.target.rows = 1;
 
         const currentRows = Math.floor(e.target.scrollHeight / lineHeight);
         const maxRows = 6;
@@ -217,7 +220,7 @@ const Chat = () => {
                     mb: 2
                 }}>
                     <FormControl sx={{ minWidth: 250 }} size="small">
-                        <InputLabel sx={{ color: 'white' }}>Select Model</InputLabel>
+                        <InputLabel sx={{ color: 'white', '&.Mui-focused': { color: 'white' } }}>Select Model</InputLabel>
                         <Select
                             value={selectedModel.id}
                             onChange={(e) => {
@@ -236,7 +239,24 @@ const Chat = () => {
                                 '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                                     borderColor: 'white',
                                 },
-                                backgroundColor: 'rgb(17,29,39)', 
+                                backgroundColor: 'rgb(17,29,39)',
+                                '& .MuiMenu-paper': {
+                                    marginTop: '8px', // Adjust this value to reduce the gap
+                                    marginBottom: '8px', // Adjust this value to reduce the gap
+                                },
+                            }}
+                            MenuProps={{
+                                PaperProps: {
+                                    sx: {
+                                        backgroundColor: 'rgb(17,29,39)',
+                                        marginTop: '4px', // Adjust this value to reduce the gap
+                                        marginBottom: '4px', // Adjust this value to reduce the gap
+                                        '& .MuiMenuItem-root': {
+                                            paddingTop: '8px', // Adjust padding to reduce space
+                                            paddingBottom: '8px', // Adjust padding to reduce space
+                                        },
+                                    },
+                                },
                             }}
                         >
                             {MODELS.map((model) => (
@@ -244,18 +264,18 @@ const Chat = () => {
                                     key={model.id}
                                     value={model.id}
                                     sx={{
-                                        color: 'white', 
-                                        backgroundColor: 'rgb(17,29,39)', 
+                                        color: model.id === selectedModel.id ? 'black' : 'white',
+                                        backgroundColor: model.id === selectedModel.id ? 'white' : 'rgb(17,29,39)',
                                         '&:hover': {
-                                            color: 'black', 
-                                            backgroundColor: 'white', 
+                                            color: model.id === selectedModel.id ? 'black' : 'black',
+                                            backgroundColor: model.id === selectedModel.id ? 'white' : 'white',
                                         },
                                         '&.Mui-selected': {
-                                            color: 'black', 
-                                            backgroundColor: 'white', 
+                                            color: 'black',
+                                            backgroundColor: 'white',
                                             '&:hover': {
-                                                color: 'white', 
-                                                backgroundColor: 'rgb(17,29,39)', 
+                                                color: 'black',
+                                                backgroundColor: 'white',
                                             },
                                         },
                                     }}
@@ -271,7 +291,6 @@ const Chat = () => {
                                 </MenuItem>
                             ))}
                         </Select>
-
                     </FormControl>
                 </Box>
 

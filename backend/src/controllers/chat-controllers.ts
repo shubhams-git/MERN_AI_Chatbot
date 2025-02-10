@@ -7,55 +7,62 @@ import { ignoreOverride } from "openai/_vendor/zod-to-json-schema/Options.mjs";
 import genAI from "../config/gemini.js";
 import { SYSTEM_INSTRUCTIONS } from "../utils/constants.js";
 
-const model = genAI.getGenerativeModel({ 
-    model: "gemini-2.0-flash-001",
-    generationConfig: {
-        temperature: 0.7,  // Adjust for desired "rizz" level (0.2-0.9)
-        topP: 0.8,          // Adjust for diversity (0.1-1.0)
-        topK: 40,          // Adjust for token selection (1-40)
-        maxOutputTokens: 5000, // Limit output length
-    },
-    systemInstruction: SYSTEM_INSTRUCTIONS
-});
 const generateChatCompletion = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { message } = req.body;
-        const result = chatSchema.safeParse(req.body);
-        if (!result.success) {
-            return res.status(400).json({ error: "Invalid request body" });
+        const { message, modelId } = req.body;
+        if (!message || !modelId) {
+            return res.status(400).json({ error: "Message and modelId are required" });
         }
 
         const user = await User.findById(res.locals.jwtData.id);
-        if (!user) {
-            return res.status(404).json({ error: "User not found" });
-        }
+        if (!user) return res.status(404).json({ error: "User not found" });
 
-        // Convert chat history from old format {role, content} → new {role, parts}
-        const chatHistory = user.chats.map(chat => ({
-            role: chat.role === "assistant" ? "model" : "user",
-            parts: [{ text: chat.content }]
-        }));
+        let aiResponse: string;
 
-        // Ensure the first message is from "user" (Gemini requires this)
-        if (chatHistory.length > 0 && chatHistory[0].role !== "user") {
-            chatHistory.shift(); // Remove the first message if it's not from the user
-        }
+        if (modelId.startsWith('gemini') && !modelId.includes('pro')) {
+            // Gemini Pro logic
+            const model = genAI.getGenerativeModel({ 
+                model: modelId,
+                generationConfig: {
+                    temperature: 0.7,
+                    topP: 0.8,
+                    topK: 40,
+                    maxOutputTokens: 5000,
+                },
+                systemInstruction: SYSTEM_INSTRUCTIONS
+            });
 
-        // Start chat session with chat history
-        const chatSession = model.startChat({ history: chatHistory,
-            generationConfig: {
+            const chatHistory = user.chats.map(chat => ({
+                role: chat.role === "assistant" ? "model" : "user",
+                parts: [{ text: chat.content }]
+            }));
+
+            if (chatHistory.length > 0 && chatHistory[0].role !== "user") {
+                chatHistory.shift();
+            }
+
+            const chatSession = model.startChat({ history: chatHistory });
+            const response = await chatSession.sendMessage(message);
+            aiResponse = response.response.text() || "No response";
+        } else {
+            // OpenRouter logic
+            const messages: ChatCompletionMessageParam[] = user.chats.map(chat => ({
+                role: chat.role === "assistant" ? "assistant" : "user",
+                content: chat.content
+            }));
+
+            messages.push({ role: "user", content: message });
+
+            const completion = await openai.chat.completions.create({
+                model: modelId,
+                messages,
                 temperature: 0.7,
-                topP: 0.8,
-                topK: 40,
-                maxOutputTokens: 5000,
-            },
-         });
+                max_tokens: 5000
+            });
 
-        // Send the new user message
-        const response = await chatSession.sendMessage(message);
-        const aiResponse = response.response.text() || "Sorry, I could not generate a response at this time.";
+            aiResponse = completion.choices[0].message.content || "No response";
+        }
 
-        // Store chat in DB using the **old format** (to keep compatibility)
         user.chats.push({ role: "user", content: message });
         user.chats.push({ role: "assistant", content: aiResponse });
         await user.save();
@@ -64,7 +71,7 @@ const generateChatCompletion = async (req: Request, res: Response, next: NextFun
 
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error: "Internal Server Error" });
+        return res.status(500).json({ error: error.message });
     }
 };
 

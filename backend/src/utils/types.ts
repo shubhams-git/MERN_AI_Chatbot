@@ -14,5 +14,7 @@ export const signInSchema = z.object({
 })
 
 export const chatSchema = z.object({
-    message: z.string({required_error:"The message is mandatory"})
+    message: z.string({required_error:"The message is mandatory"}),
+    modelId: z.string({required_error:"The model Id is mandatory"}).min(1)
 })
+
