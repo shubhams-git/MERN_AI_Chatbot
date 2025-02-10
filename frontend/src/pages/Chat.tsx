@@ -38,6 +38,7 @@ const Chat = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [selectedModel, setSelectedModel] = useState<Model>(MODELS[0]);
     const [isLoading, setIsLoading] = useState(false);
+    //@ts-ignore
     const [inputRows, setInputRows] = useState(1);
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);

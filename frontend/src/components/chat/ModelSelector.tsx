@@ -1,5 +1,5 @@
 import { FormControl, InputLabel, Select, MenuItem, Box, Typography } from "@mui/material";
-import { Model, MODELS } from "../../models/models";
+import { Model } from "../../models/models";
 
 type ModelSelectProps = {
     selectedModel: Model;

@@ -3,6 +3,7 @@ import CustomizedInput from "../components/shared/CustomizedInput"
 import { IoLogInOutline } from "react-icons/io5"
 import React, { useEffect } from "react"
 import axios from "axios"
+//@ts-ignore
 import { AuthProvider, useAuth } from "../context/AuthContext"
 import toast from "react-hot-toast"
 import { useNavigate } from "react-router"
