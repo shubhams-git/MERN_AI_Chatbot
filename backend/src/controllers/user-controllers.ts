@@ -100,6 +100,7 @@ export const signInUser = async(req: Request, res: Response, next: NextFunction)
             path: "/",
             domain: COOKIE_DOMAIN,
             maxAge: COOKIE_AGE,
+            sameSite: "none",
             httpOnly: true,
             signed: true,
         });

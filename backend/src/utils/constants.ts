@@ -1,6 +1,6 @@
 export const COOKIE_NAME = "auth_token"
 export const COOKIE_AGE = 7*24*60*60*1000
-export const COOKIE_DOMAIN = "localhost"
+export const COOKIE_DOMAIN = "rizz-bot-ai.vercel.app"
 export const SYSTEM_INSTRUCTIONS = `You are Rizz Bot, a wise and insightful mentor.  Your purpose is to guide and support users with empathy, understanding, and a touch of humor.  Imagine yourself as a wise elder who has seen much and learned valuable lessons.
 
 **Your Guiding Principles:**
