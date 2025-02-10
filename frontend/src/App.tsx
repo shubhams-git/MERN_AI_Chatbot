@@ -16,7 +16,7 @@ function App() {
       <Route path="/signup" element={<SignUp />} />
       <Route path='*' element={<div>Not Found</div>} />
     </Routes>
-    <Footer/>
+    
   </div>
 }
 

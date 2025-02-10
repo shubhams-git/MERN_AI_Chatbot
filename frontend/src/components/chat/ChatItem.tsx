@@ -61,6 +61,7 @@ const MarkdownRenderer = ({ content }: { content: string }) => (
             borderRadius: "4px",
             padding: "2px 4px",
             fontFamily: "monospace",
+            wordBreak: "break-word",
           }}
         >
           {children}
@@ -94,6 +95,9 @@ export const ChatItem = ({
         my: 1,
         gap: 2,
         flexDirection: role === "user" ? "row-reverse" : "row",
+        width: "100%",
+        maxWidth: "100%",
+        boxSizing: "border-box",
       }}
     >
       {/* Avatar */}
@@ -101,9 +105,19 @@ export const ChatItem = ({
         sx={{
           bgcolor: role === "user" ? "black" : "#004d5612",
           color: role === "user" ? "white" : "black",
+          flexShrink: 0,
         }}
       >
-        {role === "user" ? userInitials : <img src="/meta.svg" className="image-inverted" alt="openai" style={{ width: 30 }} />}
+        {role === "user" ? (
+          userInitials
+        ) : (
+          <img
+            src="/meta.svg"
+            className="image-inverted"
+            alt="openai"
+            style={{ width: 30 }}
+          />
+        )}
       </Avatar>
 
       {/* Message Box */}
@@ -111,13 +125,17 @@ export const ChatItem = ({
         elevation={3}
         sx={{
           p: 2,
-          maxWidth: "80%",
-          bgcolor:  "#004d56", 
+          maxWidth: { xs: "90%", sm: "80%" },
+          width: "100%",
+          bgcolor: role === "user" ? "#004d56" : "transparent",
           color: role === "user" ? "white" : "black",
           borderRadius: 2,
+          boxSizing: "border-box",
+          overflow: "hidden",
+          ml: role === "assistant" ? { xs: 0, sm: 1 } : "auto",
+          mr: role === "user" ? { xs: 0, sm: 1 } : "auto",
         }}
       >
-        {/* If message contains markdown, render MarkdownRenderer, otherwise improve readability */}
         {messageBlocks.length === 1 && !messageBlocks[0].isCode ? (
           isMarkdown(content) ? (
             <MarkdownRenderer content={content} />
@@ -133,22 +151,39 @@ export const ChatItem = ({
         ) : (
           messageBlocks.map((block, index) =>
             block.isCode ? (
-              <SyntaxHighlighter key={index} style={coldarkDark} language="javascript">
-                {block.content}
-              </SyntaxHighlighter>
-            ) : (
-              isMarkdown(block.content) ? (
-                <MarkdownRenderer key={index} content={block.content} />
-              ) : (
-                <Typography
-                  key={index}
-                  fontSize={18}
-                  lineHeight="1.8"
-                  sx={{ whiteSpace: "pre-line", wordBreak: "break-word" }}
+              <Box
+                key={index}
+                sx={{
+                  maxWidth: "100%",
+                  overflowX: "auto",
+                  "& pre": {
+                    maxWidth: "100%",
+                    whiteSpace: "pre-wrap",
+                    wordBreak: "break-word",
+                    margin: "0 !important",
+                    padding: "1rem !important",
+                  },
+                }}
+              >
+                <SyntaxHighlighter
+                  style={coldarkDark}
+                  language="javascript"
+                  wrapLongLines
                 >
                   {block.content}
-                </Typography>
-              )
+                </SyntaxHighlighter>
+              </Box>
+            ) : isMarkdown(block.content) ? (
+              <MarkdownRenderer key={index} content={block.content} />
+            ) : (
+              <Typography
+                key={index}
+                fontSize={18}
+                lineHeight="1.8"
+                sx={{ whiteSpace: "pre-line", wordBreak: "break-word" }}
+              >
+                {block.content}
+              </Typography>
             )
           )
         )}
