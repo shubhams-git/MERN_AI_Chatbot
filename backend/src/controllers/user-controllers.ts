@@ -6,11 +6,11 @@ import { createToken } from "../utils/token-manager.js"
 import { COOKIE_AGE, COOKIE_DOMAIN, COOKIE_NAME } from "../utils/constants.js"
 import { set } from "mongoose"
 
-export const getAllUsers = async(req:Request, res:Response, next: NextFunction)=>{
+export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const users = await User.find()
         return res.status(200).json({
-            message:"OK",
+            message: "OK",
             users
         })
     } catch (error) {
@@ -58,43 +58,39 @@ export const signUpUser = async (req: Request, res: Response, next: NextFunction
     }
 };
 
-export const signInUser = async(req: Request, res: Response, next: NextFunction)=>{
+export const signInUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const prom =(ms)=> new Promise((resolve,reject)=>{
-            setTimeout(()=>{resolve("Finished")},ms)
-        })
+        const prom = (ms) => new Promise((resolve, reject) => {
+            setTimeout(() => { resolve("Finished") }, ms)
+        });
         await prom(2000);
-        const result = signInSchema.safeParse(req.body)
 
-        if(!result.success){
+        const result = signInSchema.safeParse(req.body);
+        if (!result.success) {
             return res.status(400).json({
                 message: "Validation Error",
                 errors: result.error.errors,
             });
         }
-        const {email, password} = req.body
 
-        const user = await User.findOne({email: email})
-        if (!user){
-            console.log("user is: "+ user)
+        const { email, password } = req.body;
+        const user = await User.findOne({ email: email });
+        if (!user) {
+            console.log("user is: " + user);
             return res.status(401).json({
                 message: "Unauthorized Access"
             });
         }
 
-        const isMatched = await compare(password, user.password)
-
-        if (!isMatched){
+        const isMatched = await compare(password, user.password);
+        if (!isMatched) {
             return res.status(401).json({
                 message: "Unauthorized Access"
-            });            
+            });
         }
-        res.clearCookie(COOKIE_NAME, {
-            path: "/",
-            httpOnly: true,
-            signed: true
-        });
-        const token = createToken(user._id.toString(), user.email)
+
+        // Generate token and set cookie
+        const token = createToken(user._id.toString(), user.email);
         res.cookie(COOKIE_NAME, token, {
             path: "/",
             maxAge: COOKIE_AGE,
@@ -103,36 +99,39 @@ export const signInUser = async(req: Request, res: Response, next: NextFunction)
             httpOnly: true,
             signed: true,
         });
+
+        console.log("Set the cookie:", COOKIE_NAME);
+
         return res.status(200).json({
             message: "OK",
             name: user.name,
             email: user.email
         });
-        
+
     } catch (error) {
-        console.log(error)
+        console.log(error);
         return res.status(500).json({
             message: "Internal Server Error",
             cause: error.message || "An unknown error occurred",
         });
     }
-}
+};
 
-export const verifyUser = async(req: Request, res: Response, next: NextFunction)=>{
+export const verifyUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const prom =(ms)=> new Promise((resolve,reject)=>{
-            setTimeout(()=>{resolve("Finished")},ms)
+        const prom = (ms) => new Promise((resolve, reject) => {
+            setTimeout(() => { resolve("Finished") }, ms)
         })
         await prom(2000);
 
         const user = await User.findById(res.locals.jwtData.id)
-        if (!user){
+        if (!user) {
             return res.status(401).json({
                 message: "Unauthorized Access"
             });
         }
 
-        if(user._id.toString() !== res.locals.jwtData.id){
+        if (user._id.toString() !== res.locals.jwtData.id) {
             return res.status(401).json({
                 message: "Unauthorized Access- Permissions did not match"
             });
@@ -143,7 +142,7 @@ export const verifyUser = async(req: Request, res: Response, next: NextFunction)
             name: user.name,
             email: user.email
         });
-        
+
     } catch (error) {
         console.log(error)
         return res.status(500).json({
@@ -152,45 +151,49 @@ export const verifyUser = async(req: Request, res: Response, next: NextFunction)
         });
     }
 }
- 
-export const signOutUser = async(req: Request, res: Response, next: NextFunction)=>{
-    try {
-        const prom =(ms)=> new Promise((resolve,reject)=>{
-            setTimeout(()=>{resolve("Finished")},ms)
-        })
-        await prom(1000);
-        console.log("Reached Signout")
 
-        const user = await User.findById(res.locals.jwtData.id)
-        if (!user){
+export const signOutUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const prom = (ms) => new Promise((resolve, reject) => {
+            setTimeout(() => { resolve("Finished") }, ms)
+        });
+        await prom(1000);
+        console.log("Reached Signout");
+
+        const user = await User.findById(res.locals.jwtData.id);
+        if (!user) {
             return res.status(401).json({
                 message: "Unauthorized Access"
             });
         }
 
-        if(user._id.toString() !== res.locals.jwtData.id){
+        if (user._id.toString() !== res.locals.jwtData.id) {
             return res.status(401).json({
                 message: "Unauthorized Access- Permissions did not match"
             });
         }
 
-        res.clearCookie(COOKIE_NAME,{
+        // Clear the cookie
+        res.clearCookie(COOKIE_NAME, {
             path: "/",
+            sameSite: "none",
+            secure: true,
             httpOnly: true,
-            signed:true
-        })
-        console.log("Cleared the cookie")
+            signed: true,
+        });
+
+        console.log("Cleared the cookie:", COOKIE_NAME);
 
         return res.status(200).json({
             message: "OK",
         });
-        
+
     } catch (error) {
-        console.log(error)
+        console.log(error);
         return res.status(500).json({
             message: "Internal Server Error",
             cause: error.message || "An unknown error occurred",
         });
     }
-}
- 
+};
+

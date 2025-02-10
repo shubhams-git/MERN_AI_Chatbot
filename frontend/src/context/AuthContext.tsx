@@ -46,13 +46,14 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
         setIsSignedIn(true);
     };
     const signOut = async () => {
-        const response = await signOutUser();   
-        if(response === "ERROR"){
+        const response = await signOutUser();
+        if (response === "ERROR") {
             console.log("Error in Sign Out");
+        } else {
+            setUser(null);
+            setIsSignedIn(false);
+            window.location.reload();
         }
-        setUser(null);
-        setIsSignedIn(false);
-        window.location.reload();
     }; 
 
     const value = {
