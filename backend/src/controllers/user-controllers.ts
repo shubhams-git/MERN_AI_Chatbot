@@ -96,14 +96,17 @@ export const signInUser = async(req: Request, res: Response, next: NextFunction)
             signed:true
         })
         const token = createToken(user._id.toString(), user.email)
+        console.log(token)
         res.cookie(COOKIE_NAME, token, {
             path: "/",
-            domain: COOKIE_DOMAIN,
+            domain: "rizz-bot-ai.vercel.app",  // Set this to your frontend domain
             maxAge: COOKIE_AGE,
-            sameSite: "none",
+            sameSite: "none",  // Required for cross-site cookies
+            secure: true,      // Ensure cookies are sent over HTTPS
             httpOnly: true,
             signed: true,
         });
+        console.log(res.cookie[COOKIE_NAME])        
         return res.status(200).json({
             message: "OK",
             name: user.name,
