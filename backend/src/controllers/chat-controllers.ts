@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { chatSchema } from "../utils/types.js";
 import User from "../models/User.js";
-import openai from "../config/openai.js";
 import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
 import { ignoreOverride } from "openai/_vendor/zod-to-json-schema/Options.mjs";
 import genAI from "../config/gemini.js";
 import { SYSTEM_INSTRUCTIONS } from "../utils/constants.js";
+import getOpenAIClient from "../config/openai.js";
 
 const generateChatCompletion = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -20,14 +20,14 @@ const generateChatCompletion = async (req: Request, res: Response, next: NextFun
         let aiResponse: string;
 
         if (modelId.startsWith('gemini') && !modelId.includes('pro')) {
-            // Gemini Pro logic
-            const model = genAI.getGenerativeModel({ 
+            // Gemini logic - unchanged
+            const model = genAI.getGenerativeModel({
                 model: modelId,
                 generationConfig: {
                     temperature: 0.7,
                     topP: 0.8,
                     topK: 40,
-                    maxOutputTokens: 5000,
+                    maxOutputTokens: 8000,
                 },
                 systemInstruction: SYSTEM_INSTRUCTIONS
             });
@@ -45,22 +45,33 @@ const generateChatCompletion = async (req: Request, res: Response, next: NextFun
             const response = await chatSession.sendMessage(message);
             aiResponse = response.response.text() || "No response";
         } else {
-            // OpenRouter logic
-            const messages: ChatCompletionMessageParam[] = user.chats.map(chat => ({
+            // OpenRouter logic - simplified
+            const openai = getOpenAIClient(); // Get a new client with the next key
+            const messages: ChatCompletionMessageParam[] = [{ role: "system", content: SYSTEM_INSTRUCTIONS }]; // Add system instruction here!
+
+            const chatHistory: ChatCompletionMessageParam[] | null = user.chats.map(chat => ({
                 role: chat.role === "assistant" ? "assistant" : "user",
                 content: chat.content
             }));
 
-            messages.push({ role: "user", content: message });
+            messages.push(...chatHistory); // Add the chat history after the system instruction
+            messages.push({ role: "user", content: message }); // And finally the user message
 
-            const completion = await openai.chat.completions.create({
-                model: modelId,
-                messages,
-                temperature: 0.7,
-                max_tokens: 5000
-            });
+            try {
+                const completion = await openai.chat.completions.create({
+                    model: modelId,
+                    messages,
+                    temperature: 0.7,
+                    max_tokens: 8000
+                });
 
-            aiResponse = completion.choices[0].message.content || "No response";
+                aiResponse = completion.choices[0].message.content || "No response";
+            } catch (error: any) {
+                // Handle errors - no retry logic
+                console.error("OpenAI API error:", error);
+                return res.status(500).json({ error: `OpenAI API error: ${error.message || error}` });
+            }
+
         }
 
         user.chats.push({ role: "user", content: message });
@@ -69,7 +80,7 @@ const generateChatCompletion = async (req: Request, res: Response, next: NextFun
 
         return res.status(200).json({ chats: user.chats });
 
-    } catch (error) {
+    } catch (error: any) {
         console.error(error);
         return res.status(500).json({ error: error.message });
     }

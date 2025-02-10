@@ -22,10 +22,10 @@ type Model = {
 };
 
 const MODELS: Model[] = [
-    { id: 'gemini-2.0-flash', provider: 'Google', name: 'Gemini Flash 2.0' },
-    { id: 'gemini-2.0-flash-lite-preview-02-05', provider: 'Google', name: 'Gemini Flash Lite 2.0' },
+    { id: 'gemini-2.0-flash', provider: 'Google', name: 'Gemini Flash 2.0 (Recommended)' },
+    { id: 'gemini-2.0-flash-lite-preview-02-05', provider: 'Google', name: 'Gemini Flash Lite 2.0 (Recommended)' },
     { id: 'qwen/qwen2.5-vl-72b-instruct:free', provider: 'Qwen', name: 'Qwen2.5 VL' },
-    { id: 'deepseek/deepseek-r1:free', provider: 'DeepSeek', name: 'DeepSeek R1' },
+    { id: 'deepseek/deepseek-r1:free', provider: 'DeepSeek', name: 'DeepSeek R1 (Slow)' },
     { id: 'nvidia/llama-3.1-nemotron-70b-instruct:free', provider: 'NVIDIA', name: 'Llama 3.1' },
     { id: 'google/gemini-2.0-pro-exp-02-05:free', provider: 'Google', name: 'Gemini Pro 2.0' },
     { id: 'meta-llama/llama-3.3-70b-instruct:free', provider: 'Meta', name: 'Llama 3.3' },
@@ -145,7 +145,6 @@ const Chat = () => {
                 width: '100%',
                 height: '100%',
                 mt: 3,
-                gap: 3,
                 overflow: 'hidden',
             }}
         >
@@ -154,16 +153,21 @@ const Chat = () => {
                     display: { md: 'flex', sm: 'none', xs: 'none' },
                     flex: 0.2,
                     flexDirection: 'column',
+                    marginLeft: 3,
                 }}>
                 <Box
                     sx={{
                         display: 'flex',
                         width: '100%',
-                        height: '60vh',
+                        height: 'auto',
                         bgcolor: 'rgb(17,29,39)',
                         borderRadius: 5,
                         flexDirection: 'column',
-                        mx: 3,
+                        alignItems: 'center',
+                        mx: 'auto',
+                        my: 'auto',
+                        px: 1,
+                        py: 3
                     }}>
                     <Avatar
                         sx={{
@@ -171,38 +175,77 @@ const Chat = () => {
                             my: 2,
                             bgcolor: "white",
                             color: 'black',
-                            fontWeight: 700
+                            fontWeight: 700,
+                            width: 56,
+                            height: 56,
+                            fontSize: '1.5rem',
                         }}>
                         {auth?.user?.name[0]}{auth?.user?.name.split(" ")[1]?.[0]}
                     </Avatar>
-                    <Typography sx={{ mx: 'auto', fontFamily: 'work sans' }}>
-                        You are talking to a ChatBOT
-                    </Typography>
-                    <Typography sx={{
-                        mx: 'auto',
-                        fontFamily: 'work sans',
-                        textAlign: 'center',
-                        my: 4,
-                        p: 3
-                    }}>
-                        Hey there! I’m your friendly chatbot, here to help, chat, and maybe even crack a joke or two. <br />
-                        Ask me anything—news, weather, random trivia… or just how my day’s going (spoiler: it’s always great!).
+                    <Box sx={{ textAlign: 'center', mb: 2 }}>
+                        <Typography
+                            variant="h5"
+                            sx={{
+                                fontFamily: "'Work Sans', sans-serif",
+                                fontWeight: 700,
+                                letterSpacing: 1,
+                                color: '#fff',
+                                mb: 1,
+                                textTransform: 'uppercase',
+                            }}>
+                            Welcome to RizzBot!
+                        </Typography>
+                        <Typography
+                            variant="subtitle1"
+                            sx={{
+                                fontFamily: "'Work Sans', sans-serif",
+                                fontWeight: 500,
+                                color: red[200],
+                                letterSpacing: 0.5,
+                            }}>
+                            Ready to get Rizzed?
+                        </Typography>
+                    </Box>
+                    <Typography
+                        sx={{
+                            fontFamily: "'Work Sans', sans-serif",
+                            fontSize: '0.9rem',
+                            textAlign: 'center',
+                            py: 1,
+                            px: 2,
+                            lineHeight: 1.7,
+                            color: 'rgba(255,255,255,0.9)',
+                            bgcolor: 'rgba(255,255,255,0.05)',
+                            borderRadius: 2,
+                            mx: 'auto',
+                            mb: 3,
+                            maxWidth: '90%',
+                            overflowWrap: 'break-word',
+                        }}>
+                        Hey there! I'm your go-to chatbot, here to help with info, humor, and good vibes.<br /><br />
+                        Need help decoding tricky scientific concepts? Got a coding question? <br />
+                        Or maybe you just feel like <br />
+                        <em>chatting about life’s big (or small) mysteries?</em> Whatever it is, I’ve got your back.<br /><br />
+                        Ask away and let’s vibe!
                     </Typography>
                     <Button
                         onClick={handleClearConversation}
                         sx={{
-                            width: 200,
+                            width: 'fit-content',
+                            px: 3,
                             my: 'auto',
                             mx: 'auto',
                             color: 'white',
                             fontWeight: 700,
                             borderRadius: 3,
                             bgcolor: red[400],
-                            ":hover": { bgcolor: red.A400 }
+                            ":hover": { bgcolor: red.A400 },
+                            textAlign: 'center',
                         }}>
                         Clear Conversation
                     </Button>
                 </Box>
+
             </Box>
 
             <Box sx={{
@@ -340,14 +383,14 @@ const Chat = () => {
                         sx={{
                             '& .MuiInputBase-root': {
                                 color: 'white',
-                                fontSize: '1.25rem',
+                                fontSize: '1.10rem', 
                                 lineHeight: 1.2,
-                                padding: '8px 12px',
+                                padding: '6px 10px', 
                                 overflowY: 'auto',
                                 '& textarea': {
                                     resize: 'vertical',
-                                    minHeight: '24px',
-                                    maxHeight: '144px',
+                                    minHeight: '20px',
+                                    maxHeight: '120px',
                                 },
                                 '&::-webkit-scrollbar': {
                                     width: '6px',
@@ -362,6 +405,7 @@ const Chat = () => {
                             },
                         }}
                     />
+
                     <IconButton
                         onClick={handleSubmit}
                         disabled={isLoading}

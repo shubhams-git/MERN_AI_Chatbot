@@ -1,7 +1,7 @@
 import User from "../models/User.js";
-import openai from "../config/openai.js";
 import genAI from "../config/gemini.js";
 import { SYSTEM_INSTRUCTIONS } from "../utils/constants.js";
+import getOpenAIClient from "../config/openai.js";
 const generateChatCompletion = async (req, res, next) => {
     try {
         const { message, modelId } = req.body;
@@ -13,14 +13,14 @@ const generateChatCompletion = async (req, res, next) => {
             return res.status(404).json({ error: "User not found" });
         let aiResponse;
         if (modelId.startsWith('gemini') && !modelId.includes('pro')) {
-            // Gemini Pro logic
+            // Gemini logic - unchanged
             const model = genAI.getGenerativeModel({
                 model: modelId,
                 generationConfig: {
                     temperature: 0.7,
                     topP: 0.8,
                     topK: 40,
-                    maxOutputTokens: 5000,
+                    maxOutputTokens: 8000,
                 },
                 systemInstruction: SYSTEM_INSTRUCTIONS
             });
@@ -36,19 +36,29 @@ const generateChatCompletion = async (req, res, next) => {
             aiResponse = response.response.text() || "No response";
         }
         else {
-            // OpenRouter logic
-            const messages = user.chats.map(chat => ({
+            // OpenRouter logic - simplified
+            const openai = getOpenAIClient(); // Get a new client with the next key
+            const messages = [{ role: "system", content: SYSTEM_INSTRUCTIONS }]; // Add system instruction here!
+            const chatHistory = user.chats.map(chat => ({
                 role: chat.role === "assistant" ? "assistant" : "user",
                 content: chat.content
             }));
-            messages.push({ role: "user", content: message });
-            const completion = await openai.chat.completions.create({
-                model: modelId,
-                messages,
-                temperature: 0.7,
-                max_tokens: 5000
-            });
-            aiResponse = completion.choices[0].message.content || "No response";
+            messages.push(...chatHistory); // Add the chat history after the system instruction
+            messages.push({ role: "user", content: message }); // And finally the user message
+            try {
+                const completion = await openai.chat.completions.create({
+                    model: modelId,
+                    messages,
+                    temperature: 0.7,
+                    max_tokens: 8000
+                });
+                aiResponse = completion.choices[0].message.content || "No response";
+            }
+            catch (error) {
+                // Handle errors - no retry logic
+                console.error("OpenAI API error:", error);
+                return res.status(500).json({ error: `OpenAI API error: ${error.message || error}` });
+            }
         }
         user.chats.push({ role: "user", content: message });
         user.chats.push({ role: "assistant", content: aiResponse });
