@@ -7,7 +7,7 @@ import cookieParser from "cookie-parser";
 
 const app = express()
 app.use(cors({
-    origin: ["http://localhost:5173", "https://your-frontend.vercel.app"], 
+    origin: ["http://localhost:5173", "https://rizz-bot-ai.vercel.app"], 
     credentials: true, 
     methods: ["GET", "POST", "PUT", "DELETE"], 
     allowedHeaders: ["Content-Type", "Authorization"], 
