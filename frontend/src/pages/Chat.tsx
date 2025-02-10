@@ -168,7 +168,7 @@ const Chat = () => {
                         mx: 'auto',
                         my: 'auto',
                         px: 1,
-                        py: 3
+                        py: 2
                     }}>
                     <Avatar
                         sx={{
@@ -179,7 +179,7 @@ const Chat = () => {
                             fontWeight: 700,
                             width: 56,
                             height: 56,
-                            fontSize: '1.5rem',
+                            fontSize: '1.25rem',
                         }}>
                         {auth?.user?.name[0]}{auth?.user?.name.split(" ")[1]?.[0]}
                     </Avatar>
@@ -188,6 +188,7 @@ const Chat = () => {
                             variant="h5"
                             sx={{
                                 fontFamily: "'Work Sans', sans-serif",
+                                fontSize: '1.2rem',
                                 fontWeight: 700,
                                 letterSpacing: 1,
                                 color: '#fff',
