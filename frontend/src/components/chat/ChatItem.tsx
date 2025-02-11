@@ -71,7 +71,7 @@ const MarkdownRenderer = ({ content }: { content: string }) => (
           {children}
         </Typography>
       ),
-      p: ({ children }) => <Typography gutterBottom>{children}</Typography>,
+      p: ({ children }) => <Typography gutterBottom sx={{ my: 1.5 }}>{children}</Typography>,
       ul: ({ children }) => (
         <ul style={{ paddingLeft: 20, color: "whitesmoke" }}>{children}</ul>
       ),

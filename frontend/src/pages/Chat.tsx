@@ -1,6 +1,21 @@
-import { Avatar, Box, Button, IconButton, Typography, TextField, Select, MenuItem, FormControl, InputLabel, useMediaQuery, useTheme } from "@mui/material";
-import { useAuth } from "../context/AuthContext"
-import { red } from "@mui/material/colors"
+import {
+    Avatar,
+    Box,
+    Button,
+    Fab, // <-- Added import for the mobile FAB
+    IconButton,
+    Typography,
+    TextField,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel,
+    useMediaQuery,
+    useTheme
+} from "@mui/material";
+import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
+import { useAuth } from "../context/AuthContext";
+import { red } from "@mui/material/colors";
 import { ChatItem } from "../components/chat/ChatItem";
 import { IoMdSend } from "react-icons/io";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -9,11 +24,10 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { LoadingResponse } from "../components/chat/LoadingResponse";
 
-
 type Message = {
     role: "user" | "assistant";
     content: string;
-}
+};
 
 type Model = {
     id: string;
@@ -25,16 +39,15 @@ const MODELS: Model[] = [
     { id: 'gemini-2.0-flash', provider: 'Google', name: 'Gemini Flash 2.0 (Recommended)' },
     { id: 'gemini-2.0-flash-lite-preview-02-05', provider: 'Google', name: 'Gemini Flash Lite 2.0 (Recommended)' },
     { id: 'qwen/qwen2.5-vl-72b-instruct:free', provider: 'Qwen', name: 'Qwen2.5 VL' },
-    { id: 'deepseek/deepseek-r1:free', provider: 'DeepSeek', name: 'DeepSeek R1 (Slow)' },
+    { id: 'deepseek/deepseek-r1-distill-llama-70b:free', provider: 'DeepSeek', name: 'DeepSeek R1' },
     { id: 'nvidia/llama-3.1-nemotron-70b-instruct:free', provider: 'NVIDIA', name: 'Llama 3.1' },
     { id: 'google/gemini-2.0-pro-exp-02-05:free', provider: 'Google', name: 'Gemini Pro 2.0' },
     { id: 'meta-llama/llama-3.3-70b-instruct:free', provider: 'Meta', name: 'Llama 3.3' },
 ];
 
-
 const Chat = () => {
-    const auth = useAuth()
-    const nav = useNavigate()
+    const auth = useAuth();
+    const nav = useNavigate();
     const [messages, setMessages] = useState<Message[]>([]);
     const [selectedModel, setSelectedModel] = useState<Model>(MODELS[0]);
     const [isLoading, setIsLoading] = useState(false);
@@ -44,8 +57,6 @@ const Chat = () => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const theme = useTheme();
     const isBelowMd = useMediaQuery(theme.breakpoints.down("md"));
-
-
 
     useLayoutEffect(() => {
         if (auth?.isSignedIn && auth.user) {
@@ -82,7 +93,7 @@ const Chat = () => {
                 setIsLoading(false);
             }
         }
-    }
+    };
 
     const handleKeyPress = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -125,7 +136,7 @@ const Chat = () => {
             console.error("Error deleting chats:", error);
             toast.error("Failed to clear the conversation.", { id: "delete chat" });
         }
-    }
+    };
 
     useEffect(() => {
         if (!auth?.isSignedIn || !auth?.user) {
@@ -153,13 +164,15 @@ const Chat = () => {
                 overflow: 'hidden',
             }}
         >
+            {/* Desktop Sidebar */}
             <Box
                 sx={{
                     display: { md: 'flex', sm: 'none', xs: 'none' },
                     flex: 0.2,
                     flexDirection: 'column',
                     marginLeft: 3,
-                }}>
+                }}
+            >
                 <Box
                     sx={{
                         display: 'flex',
@@ -173,7 +186,8 @@ const Chat = () => {
                         my: 'auto',
                         px: 1,
                         py: 2
-                    }}>
+                    }}
+                >
                     <Avatar
                         sx={{
                             mx: 'auto',
@@ -184,7 +198,8 @@ const Chat = () => {
                             width: 56,
                             height: 56,
                             fontSize: '1.25rem',
-                        }}>
+                        }}
+                    >
                         {auth?.user?.name[0]}{auth?.user?.name.split(" ")[1]?.[0]}
                     </Avatar>
                     <Box sx={{ textAlign: 'center', mb: 2 }}>
@@ -198,7 +213,8 @@ const Chat = () => {
                                 color: '#fff',
                                 mb: 1,
                                 textTransform: 'uppercase',
-                            }}>
+                            }}
+                        >
                             Welcome to RizzBot!
                         </Typography>
                         <Typography
@@ -208,7 +224,8 @@ const Chat = () => {
                                 fontWeight: 500,
                                 color: red[200],
                                 letterSpacing: 0.5,
-                            }}>
+                            }}
+                        >
                             Ready to get Rizzed?
                         </Typography>
                     </Box>
@@ -227,7 +244,8 @@ const Chat = () => {
                             mb: 3,
                             maxWidth: '90%',
                             overflowWrap: 'break-word',
-                        }}>
+                        }}
+                    >
                         Hey there! I'm your go-to chatbot, here to help with info, humor, and good vibes.<br /><br />
                         Need help decoding tricky scientific concepts? Got a coding question? <br />
                         Or maybe you just feel like <br />
@@ -247,29 +265,41 @@ const Chat = () => {
                             bgcolor: red[400],
                             ":hover": { bgcolor: red.A400 },
                             textAlign: 'center',
-                        }}>
+                        }}
+                    >
                         Clear Conversation
                     </Button>
                 </Box>
-
             </Box>
 
-            <Box sx={{
-                display: "flex",
-                flex: { md: 0.8, sm: 1, xs: 1 },
-                flexDirection: 'column',
-                padding: isBelowMd? 1: 3,
-                paddingTop: 1,
-                minWidth: 0,
-            }}>
-                <Box sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 2,
-                    mb: isBelowMd? 2:6,
-                }}>
-                    <FormControl sx={{ minWidth: 250 }} size="small">
+            {/* Chat and Input Section */}
+            <Box
+                sx={{
+                    display: "flex",
+                    flex: { md: 0.8, sm: 1, xs: 1 },
+                    flexDirection: 'column',
+                    padding: isBelowMd ? 1 : 3,
+                    paddingTop: 1,
+                    minWidth: 0,
+                }}
+            >
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 2,
+                        mb: isBelowMd ? 2 : 6,
+                        flexWrap: 'wrap',
+                    }}
+                >
+                    <FormControl
+                        sx={{
+                            minWidth: { xs: 200, sm: 250 },
+                            flexGrow: 1,
+                        }}
+                        size="small"
+                    >
                         <InputLabel sx={{ color: 'white', '&.Mui-focused': { color: 'white' } }}>Select Model</InputLabel>
                         <Select
                             value={selectedModel.id}
@@ -291,19 +321,19 @@ const Chat = () => {
                                 },
                                 backgroundColor: 'rgb(17,29,39)',
                                 '& .MuiMenu-paper': {
-                                    marginTop: '8px', // Adjust this value to reduce the gap
-                                    marginBottom: '8px', // Adjust this value to reduce the gap
+                                    marginTop: '8px',
+                                    marginBottom: '8px',
                                 },
                             }}
                             MenuProps={{
                                 PaperProps: {
                                     sx: {
                                         backgroundColor: 'rgb(17,29,39)',
-                                        marginTop: '4px', // Adjust this value to reduce the gap
-                                        marginBottom: '4px', // Adjust this value to reduce the gap
+                                        marginTop: '4px',
+                                        marginBottom: '4px',
                                         '& .MuiMenuItem-root': {
-                                            paddingTop: '8px', // Adjust padding to reduce space
-                                            paddingBottom: '8px', // Adjust padding to reduce space
+                                            paddingTop: '8px',
+                                            paddingBottom: '8px',
                                         },
                                     },
                                 },
@@ -349,7 +379,7 @@ const Chat = () => {
                     sx={{
                         flexGrow: 1,
                         width: '100%',
-                        height: isBelowMd? '70vh': '60vh',
+                        height: isBelowMd ? '70vh' : '60vh',
                         borderRadius: 3,
                         mx: 'auto',
                         display: 'flex',
@@ -363,26 +393,29 @@ const Chat = () => {
                         px: 0,
                         py: { xs: 0.5, sm: 1 },
                         gap: { xs: 0.5, sm: 1 },
-                        my:2
-                    }}>
+                        my: 2
+                    }}
+                >
                     {messages.map((message, index) => (
                         <ChatItem role={message.role} content={message.content} key={index} />
                     ))}
                     {isLoading && <LoadingResponse />}
                 </Box>
 
-                <Box sx={{
-                    width: "100%",
-                    maxWidth: "100%",
-                    borderRadius: 8,
-                    p: isBelowMd?1:2,
-                    borderColor: "white",
-                    backgroundColor: "rgb(17,29,39)",
-                    display: "flex",
-                    margin: "auto",
-                    boxSizing: "border-box",
-                    alignItems: 'center',
-                }}>
+                <Box
+                    sx={{
+                        width: "100%",
+                        maxWidth: "100%",
+                        borderRadius: 8,
+                        p: isBelowMd ? 1 : 2,
+                        borderColor: "white",
+                        backgroundColor: "rgb(17,29,39)",
+                        display: "flex",
+                        margin: "auto",
+                        boxSizing: "border-box",
+                        alignItems: 'center',
+                    }}
+                >
                     <TextField
                         inputRef={inputRef}
                         multiline
@@ -426,13 +459,39 @@ const Chat = () => {
                             ml: 1,
                             alignSelf: 'flex-end',
                             mb: 0.5
-                        }}>
+                        }}
+                    >
                         <IoMdSend />
                     </IconButton>
                 </Box>
             </Box>
-        </Box>
-    )
-}
 
-export default Chat
+            {/* Mobile FAB for Clear Conversation */}
+            {isBelowMd && (
+                <Fab
+                    variant="extended" // Enables both an icon and text
+                    onClick={handleClearConversation}
+                    color="error"
+                    sx={{
+                        position: 'fixed',
+                        bottom: 100, // Adjust as needed
+                        right: 16,
+                        zIndex: 1000,
+                        textTransform: 'none', // Keeps text as-is (no uppercasing)
+                        fontSize: '0.875rem', // A more readable size than 0.5rem
+                        fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+                        fontWeight: 500,
+                        boxShadow: '0px 3px 5px rgba(0, 0, 0, 0.3)',
+                        padding: '8px 16px',
+                    }}
+                >
+                    <DeleteSweepIcon sx={{ mr: 1 }} fontSize="small" />
+                    Clear
+                </Fab>
+
+            )}
+        </Box>
+    );
+};
+
+export default Chat;
