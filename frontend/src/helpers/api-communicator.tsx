@@ -25,13 +25,14 @@ export const signInUser = async (email: string, password: string) => {
 
 export const signUpUser = async (name: string, email: string, password: string) => {
     const res = await axios.post("/user/signup", { name, email, password });
-    if (res.status !== 200) {
+    if (res.status !== 200 && res.status !== 201) {
         throw new Error("ERROR");
     }
     const { token, name: userName, email: userEmail } = res.data;
-    setAuthToken(token); // Set token after successful sign-up
+    setAuthToken(token); 
     return { name: userName, email: userEmail };
 };
+
 
 export const checkAuthStatus = async () => {
     const token = localStorage.getItem("token");
