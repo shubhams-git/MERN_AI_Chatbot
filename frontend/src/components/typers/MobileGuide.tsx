@@ -1,4 +1,4 @@
-import { Box, Typography, Button, Link } from "@mui/material";
+import { Box, Typography, Button } from "@mui/material";
 import { Link as RouterLink } from "react-router";
 
 const MobileGuide = () => {
