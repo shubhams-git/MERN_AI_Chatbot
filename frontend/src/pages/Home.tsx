@@ -32,7 +32,7 @@ const Home = () => {
             width: "100%",
             display: "flex",
             justifyContent: "center",
-            flexDirection: { md: "row", xs: "column", sm: "column" },
+            flexDirection: isBelowMd? "column": "row",
             gap: 5,
             my: 2,
           }}
