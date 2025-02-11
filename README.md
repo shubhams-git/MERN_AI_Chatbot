@@ -114,7 +114,7 @@ For questions or issues, please open an issue in the repository.
 For any inquiries or support, please reach out to:
 
 - **Maintainer:** [Shubham's email](mailto:msg2shubh@gmail.com)
-- **Linked In:** [Shubham's Linkedin](https://www.linkedin.com/in/ss-shubham-sharma)
+- **Linked In:** [Shubham's LinkedIn](https://www.linkedin.com/in/ss-shubham-sharma)
 
 ---
 
