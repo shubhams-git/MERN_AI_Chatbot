@@ -113,8 +113,8 @@ For questions or issues, please open an issue in the repository.
 
 For any inquiries or support, please reach out to:
 
-- **Maintainer:** [Shubham Sharma](mailto:msg2shubh@gmail.com)
-- **GitHub:** [shubhams-git](https://github.com/shubhams-git)
+- **Maintainer:** [Shubham's email](mailto:msg2shubh@gmail.com)
+- **Linked In:** [Shubham's Linkedin](https://www.linkedin.com/in/ss-shubham-sharma)
 
 ---
 
