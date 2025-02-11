@@ -358,6 +358,9 @@ const Chat = () => {
                         '&::-webkit-scrollbar': { display: 'none' },
                         scrollbarWidth: 'none',
                         minWidth: 0,
+                        px: { xs: 1, sm: 2 },
+                        py: { xs: 0.5, sm: 1 },
+                        gap: { xs: 0.5, sm: 1 }
                     }}>
                     {messages.map((message, index) => (
                         <ChatItem role={message.role} content={message.content} key={index} />

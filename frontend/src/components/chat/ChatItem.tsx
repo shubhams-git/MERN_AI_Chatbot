@@ -1,4 +1,11 @@
-import { Avatar, Box, Typography, Paper } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Typography,
+  Paper,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
 import { useAuth } from "../../context/AuthContext";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { coldarkDark } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -6,49 +13,74 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useMemo } from "react";
 
-// Function to check if content is markdown or plain text
-const isMarkdown = (text: string) => /^(\s*#+|[*_\-]{2,}|```)/m.test(text);
+// Function to check if content is markdown
+const isMarkdown = (text: string) => /^(\s*#+|(?:[*_-]{2,})|```)/m.test(text);
 
-// Function to split content into text and code blocks
+// Function to extract text and code blocks
 function extractCode(message: string) {
-  const parts = message.split(/```(\w+)?\n?/g);
-  return parts.map((block, index) => ({
-    isCode: index % 2 === 1,
-    content: block.trim(),
-    language: index % 2 === 1 ? parts[index + 1] || "javascript" : null, // Extract language
-  }));
+  const codeBlockRegex = /```(\w+)?\n([\s\S]*?)^```/gm;
+  const parts = [];
+  let lastIndex = 0;
+
+  message.replace(codeBlockRegex, (match, language, code, offset) => {
+    if (offset > lastIndex) {
+      parts.push({
+        isCode: false,
+        content: message.slice(lastIndex, offset),
+        language: null,
+      });
+    }
+    parts.push({
+      isCode: true,
+      content: code.trim(),
+      language: language || "plaintext",
+    });
+
+    lastIndex = offset + match.length;
+    return match;
+  });
+
+  if (lastIndex < message.length) {
+    parts.push({
+      isCode: false,
+      content: message.slice(lastIndex),
+      language: null,
+    });
+  }
+
+  return parts;
 }
 
-// Custom Markdown renderer for consistent styling
+// Custom Markdown renderer
 const MarkdownRenderer = ({ content }: { content: string }) => (
   <ReactMarkdown
     remarkPlugins={[remarkGfm]}
     components={{
       h1: ({ children }) => (
-        <Typography variant="h4" fontWeight="bold" gutterBottom fontSize={{ xs: "1.4rem", md: "2rem" }}>
+        <Typography variant="h4" fontWeight="bold" gutterBottom>
           {children}
         </Typography>
       ),
       h2: ({ children }) => (
-        <Typography variant="h5" fontWeight="bold" gutterBottom fontSize={{ xs: "1.2rem", md: "1.75rem" }}>
+        <Typography variant="h5" fontWeight="bold" gutterBottom>
           {children}
         </Typography>
       ),
       h3: ({ children }) => (
-        <Typography variant="h6" fontWeight="bold" gutterBottom fontSize={{ xs: "1.1rem", md: "1.5rem" }}>
+        <Typography variant="h6" fontWeight="bold" gutterBottom>
           {children}
         </Typography>
       ),
-      p: ({ children }) => (
-        <Typography fontSize={{ xs: 14, sm: 16, md: 18 }} lineHeight="1.8" gutterBottom>
-          {children}
-        </Typography>
+      p: ({ children }) => <Typography gutterBottom>{children}</Typography>,
+      ul: ({ children }) => (
+        <ul style={{ paddingLeft: 20, color: "whitesmoke" }}>{children}</ul>
       ),
-      li: ({ children }) => (
-        <Typography component="li" fontSize={{ xs: 14, sm: 16, md: 18 }} lineHeight="1.8" gutterBottom>
-          {children}
-        </Typography>
+      ol: ({ children }) => (
+        <ol style={{ paddingLeft: 20, color: "whitesmoke" }}>{children}</ol>
       ),
+      li: ({ children }) => <li style={{ color: "whitesmoke" }}>{children}</li>,
+      strong: ({ children }) => <strong>{children}</strong>,
+      em: ({ children }) => <em>{children}</em>,
     }}
   >
     {content}
@@ -65,6 +97,8 @@ export const ChatItem = ({
 }) => {
   const auth = useAuth();
   const messageBlocks = useMemo(() => extractCode(content), [content]);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const userInitials = auth?.user?.name
     ? auth.user.name
@@ -78,80 +112,55 @@ export const ChatItem = ({
     <Box
       sx={{
         display: "flex",
-        p: 2,
-        my: 1,
-        gap: 2,
-        flexDirection: role === "user" ? "row-reverse" : "row",
+        flexDirection: isMobile ? "column" : "row",
+        alignItems: isMobile ? "flex-start" : "center",
+        justifyContent: role === "user" ? "flex-end" : "flex-start",
+        gap: 1,
         width: "100%",
-        maxWidth: "100%",
-        boxSizing: "border-box",
+        my: 1,
+        p: 1,
       }}
     >
-      {/* Avatar */}
-      <Avatar
-        sx={{
-          bgcolor: role === "user" ? "black" : "#004d5612",
-          color: role === "user" ? "white" : "black",
-          flexShrink: 0,
-        }}
-      >
-        {role === "user" ? (
-          userInitials
-        ) : (
+      {/* If Assistant, show avatar first */}
+      {role === "assistant" && (
+        <Avatar
+          sx={{
+            bgcolor: "#004d5612",
+            color: "black",
+            width: { xs: 32, sm: 48 },
+            height: { xs: 32, sm: 48 },
+          }}
+        >
           <img
             src="/meta.svg"
             className="image-inverted"
             alt="openai"
-            style={{ width: 30 }}
+            style={{ width: isMobile ? 20 : 30 }}
           />
-        )}
-      </Avatar>
+        </Avatar>
+      )}
 
       {/* Message Box */}
       <Paper
         elevation={3}
         sx={{
-          p: 2,
-          maxWidth: { xs: "90%", sm: "80%" },
-          width: "100%",
+          p: { xs: 1.5, sm: 2 },
+          maxWidth: "80%",
           bgcolor: role === "user" ? "#004d56" : "transparent",
           color: role === "user" ? "white" : "black",
           borderRadius: 2,
-          boxSizing: "border-box",
-          overflow: "hidden",
-          ml: role === "assistant" ? { xs: 0, sm: 1 } : "auto",
-          mr: role === "user" ? { xs: 0, sm: 1 } : "auto",
         }}
       >
         {messageBlocks.length === 1 && !messageBlocks[0].isCode ? (
           isMarkdown(content) ? (
             <MarkdownRenderer content={content} />
           ) : (
-            <Typography
-              fontSize={{ xs: 14, sm: 16, md: 18 }}
-              lineHeight="1.8"
-              sx={{ whiteSpace: "pre-line", wordBreak: "break-word" }}
-            >
-              {content}
-            </Typography>
+            <Typography sx={{ whiteSpace: "pre-line" }}>{content}</Typography>
           )
         ) : (
           messageBlocks.map((block, index) =>
             block.isCode ? (
-              <Box
-                key={index}
-                sx={{
-                  maxWidth: "100%",
-                  overflowX: "auto",
-                  "& pre": {
-                    maxWidth: "100%",
-                    whiteSpace: "pre-wrap",
-                    wordBreak: "break-word",
-                    margin: "0 !important",
-                    padding: "1rem !important",
-                  },
-                }}
-              >
+              <Box key={index} sx={{ overflowX: "auto" }}>
                 <SyntaxHighlighter
                   style={coldarkDark}
                   language={block.language || "plaintext"}
@@ -163,18 +172,30 @@ export const ChatItem = ({
             ) : isMarkdown(block.content) ? (
               <MarkdownRenderer key={index} content={block.content} />
             ) : (
-              <Typography
-                key={index}
-                fontSize={18}
-                lineHeight="1.8"
-                sx={{ whiteSpace: "pre-line", wordBreak: "break-word" }}
-              >
+              <Typography key={index} sx={{ whiteSpace: "pre-line" }}>
                 {block.content}
               </Typography>
             )
           )
         )}
       </Paper>
+
+      {/* If User, show avatar after message */}
+      {role === "user" && (
+        <Avatar
+          sx={{
+            bgcolor: "black",
+            color: "white",
+            width: { xs: 32, sm: 48 },
+            height: { xs: 32, sm: 48 },
+          }}
+        >
+          {userInitials}
+        </Avatar>
+      )}
     </Box>
   );
 };
+
+
+export default ChatItem;
