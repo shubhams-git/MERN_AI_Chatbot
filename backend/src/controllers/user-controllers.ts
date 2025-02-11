@@ -3,8 +3,7 @@ import User from "../models/User.js"
 import { hash, compare } from "bcrypt"
 import { signInSchema, signUpSchema } from "../utils/types.js"
 import { createToken } from "../utils/token-manager.js"
-import { COOKIE_AGE, COOKIE_DOMAIN, COOKIE_NAME } from "../utils/constants.js"
-import { set } from "mongoose"
+import { COOKIE_AGE, COOKIE_NAME } from "../utils/constants.js"
 
 export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {

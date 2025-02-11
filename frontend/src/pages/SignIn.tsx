@@ -7,7 +7,7 @@ import axios from "axios"
 import { AuthProvider, useAuth } from "../context/AuthContext"
 import toast from "react-hot-toast"
 import { useNavigate } from "react-router"
-axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL
+axios.defaults.baseURL = "https://mern-ai-chatbot-mp5z.onrender.com/api/v1"
 axios.defaults.withCredentials = true
 
 console.log(axios.defaults.baseURL)
