@@ -4,16 +4,18 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { coldarkDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { useMemo } from "react";
 
 // Function to check if content is markdown or plain text
-const isMarkdown = (text: string) => /[#*_`\-]/.test(text);
+const isMarkdown = (text: string) => /^(\s*#+|[*_\-]{2,}|```)/m.test(text);
 
 // Function to split content into text and code blocks
 function extractCode(message: string) {
-  const parts = message.split(/```/g);
+  const parts = message.split(/```(\w+)?\n?/g);
   return parts.map((block, index) => ({
     isCode: index % 2 === 1,
     content: block.trim(),
+    language: index % 2 === 1 ? parts[index + 1] || "javascript" : null, // Extract language
   }));
 }
 
@@ -23,47 +25,27 @@ const MarkdownRenderer = ({ content }: { content: string }) => (
     remarkPlugins={[remarkGfm]}
     components={{
       h1: ({ children }) => (
-        <Typography variant="h4" fontWeight="bold" gutterBottom>
+        <Typography variant="h4" fontWeight="bold" gutterBottom fontSize={{ xs: "1.4rem", md: "2rem" }}>
           {children}
         </Typography>
       ),
       h2: ({ children }) => (
-        <Typography variant="h5" fontWeight="bold" gutterBottom>
+        <Typography variant="h5" fontWeight="bold" gutterBottom fontSize={{ xs: "1.2rem", md: "1.75rem" }}>
           {children}
         </Typography>
       ),
       h3: ({ children }) => (
-        <Typography variant="h6" fontWeight="bold" gutterBottom>
+        <Typography variant="h6" fontWeight="bold" gutterBottom fontSize={{ xs: "1.1rem", md: "1.5rem" }}>
           {children}
         </Typography>
       ),
       p: ({ children }) => (
-        <Typography fontSize={18} lineHeight="1.8" gutterBottom>
+        <Typography fontSize={{ xs: 14, sm: 16, md: 18 }} lineHeight="1.8" gutterBottom>
           {children}
         </Typography>
-      ),
-      ul: ({ children }) => (
-        <Box component="ul" sx={{ pl: 4, mb: 2 }}>
-          {children}
-        </Box>
       ),
       li: ({ children }) => (
-        <Typography component="li" fontSize={18} lineHeight="1.8" gutterBottom>
-          {children}
-        </Typography>
-      ),
-      code: ({ children }) => (
-        <Typography
-          component="code"
-          sx={{
-            fontSize: "0.9rem",
-            backgroundColor: "#1e1e1e",
-            borderRadius: "4px",
-            padding: "2px 4px",
-            fontFamily: "monospace",
-            wordBreak: "break-word",
-          }}
-        >
+        <Typography component="li" fontSize={{ xs: 14, sm: 16, md: 18 }} lineHeight="1.8" gutterBottom>
           {children}
         </Typography>
       ),
@@ -82,9 +64,14 @@ export const ChatItem = ({
   content: string;
 }) => {
   const auth = useAuth();
-  const messageBlocks = extractCode(content);
+  const messageBlocks = useMemo(() => extractCode(content), [content]);
+
   const userInitials = auth?.user?.name
-    ? `${auth.user.name[0]}${auth.user.name.split(" ")[1]?.[0] || ""}`
+    ? auth.user.name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
     : "U";
 
   return (
@@ -141,7 +128,7 @@ export const ChatItem = ({
             <MarkdownRenderer content={content} />
           ) : (
             <Typography
-              fontSize={18}
+              fontSize={{ xs: 14, sm: 16, md: 18 }}
               lineHeight="1.8"
               sx={{ whiteSpace: "pre-line", wordBreak: "break-word" }}
             >
@@ -167,7 +154,7 @@ export const ChatItem = ({
               >
                 <SyntaxHighlighter
                   style={coldarkDark}
-                  language="javascript"
+                  language={block.language || "plaintext"}
                   wrapLongLines
                 >
                   {block.content}

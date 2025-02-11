@@ -2,15 +2,10 @@ import { Box, Button, Typography } from "@mui/material"
 import CustomizedInput from "../components/shared/CustomizedInput"
 import { IoLogInOutline } from "react-icons/io5"
 import React, { useEffect } from "react"
-import axios from "axios"
 //@ts-ignore
 import { AuthProvider, useAuth } from "../context/AuthContext"
 import toast from "react-hot-toast"
 import { useNavigate } from "react-router"
-axios.defaults.baseURL = "https://mern-ai-chatbot-mp5z.onrender.com/api/v1"
-axios.defaults.withCredentials = true
-
-console.log(axios.defaults.baseURL)
 
 const SignIn = () => {
   const nav = useNavigate()
