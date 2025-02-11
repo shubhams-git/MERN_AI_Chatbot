@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from "@mui/material"
+import { Box, Button, Typography, useMediaQuery, useTheme } from "@mui/material"
 import CustomizedInput from "../components/shared/CustomizedInput"
 import { IoLogInOutline } from "react-icons/io5"
 import React, { useEffect } from "react"
@@ -10,6 +10,8 @@ import { useNavigate } from "react-router"
 const SignIn = () => {
   const nav = useNavigate()
   const auth = useAuth();
+  const theme = useTheme();
+  const isBelowMd = useMediaQuery(theme.breakpoints.down("md"));
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
@@ -49,7 +51,7 @@ const SignIn = () => {
               borderRadius: "10px",
               border: "none",
               width: "100%",
-              maxWidth: "400px",
+              maxWidth: isBelowMd?"auto":"400px",
             }}>
             <Box
               display={"flex"}
@@ -71,7 +73,7 @@ const SignIn = () => {
                   px: 2,
                   py: 1,
                   mt: 2,
-                  width: 400,
+                  width: 'auto',
                   borderRadius: 2,
                   bgcolor: "#00fffc",
                   ":hover": {

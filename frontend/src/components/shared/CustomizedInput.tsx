@@ -14,7 +14,7 @@ const CustomizedInput = (props: Props) => {
       type={props.type}
       slotProps={{ inputLabel: { sx: { color: 'white' } } }}
       sx={{
-        width: 400,
+        width: "100%",
         mt: 2,
         borderRadius: 2,
         color: "white",

@@ -102,10 +102,10 @@ export const ChatItem = ({
 
   const userInitials = auth?.user?.name
     ? auth.user.name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
     : "U";
 
   return (
@@ -113,12 +113,13 @@ export const ChatItem = ({
       sx={{
         display: "flex",
         flexDirection: isMobile ? "column" : "row",
-        alignItems: isMobile ? "flex-start" : "center",
+        alignItems: "flex-start",
         justifyContent: role === "user" ? "flex-end" : "flex-start",
         gap: 1,
         width: "100%",
-        my: 1,
-        p: 1,
+        my: isMobile?0:1,
+        pr: role === "user" ? 1:0,
+        pl: role === "assistant" ? 1:0,
       }}
     >
       {/* If Assistant, show avatar first */}
@@ -140,15 +141,33 @@ export const ChatItem = ({
         </Avatar>
       )}
 
+      {/* User Avatar should be before the message on mobile and aligned right */}
+      {role === "user" && isMobile && (
+        <Box sx={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
+          <Avatar
+            sx={{
+              bgcolor: "black",
+              color: "white",
+              width: { xs: 32, sm: 48 },
+              height: { xs: 32, sm: 48 },
+            }}
+          >
+            {userInitials}
+          </Avatar>
+        </Box>
+      )}
+
       {/* Message Box */}
       <Paper
         elevation={3}
         sx={{
           p: { xs: 1.5, sm: 2 },
-          maxWidth: "80%",
+          
+          maxWidth: isMobile?( role === "user"?"90%":"95%" ):"80%",
           bgcolor: role === "user" ? "#004d56" : "transparent",
           color: role === "user" ? "white" : "black",
           borderRadius: 2,
+          alignSelf: role === "user" && isMobile ? "flex-end" : "flex-start",
         }}
       >
         {messageBlocks.length === 1 && !messageBlocks[0].isCode ? (
@@ -180,8 +199,8 @@ export const ChatItem = ({
         )}
       </Paper>
 
-      {/* If User, show avatar after message */}
-      {role === "user" && (
+      {/* If User and not Mobile, show avatar after message */}
+      {role === "user" && !isMobile && (
         <Avatar
           sx={{
             bgcolor: "black",
@@ -194,6 +213,8 @@ export const ChatItem = ({
         </Avatar>
       )}
     </Box>
+
+
   );
 };
 

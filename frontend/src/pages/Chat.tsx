@@ -149,7 +149,7 @@ const Chat = () => {
                 flex: 1,
                 width: '100%',
                 height: '100%',
-                mt: 3,
+                mt: 0,
                 overflow: 'hidden',
             }}
         >
@@ -258,7 +258,8 @@ const Chat = () => {
                 display: "flex",
                 flex: { md: 0.8, sm: 1, xs: 1 },
                 flexDirection: 'column',
-                padding: 3,
+                padding: isBelowMd? 1: 3,
+                paddingTop: 1,
                 minWidth: 0,
             }}>
                 <Box sx={{
@@ -266,7 +267,7 @@ const Chat = () => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: 2,
-                    mb: 2
+                    mb: isBelowMd? 2:6,
                 }}>
                     <FormControl sx={{ minWidth: 250 }} size="small">
                         <InputLabel sx={{ color: 'white', '&.Mui-focused': { color: 'white' } }}>Select Model</InputLabel>
@@ -346,8 +347,9 @@ const Chat = () => {
                 <Box
                     ref={messagesEndRef}
                     sx={{
+                        flexGrow: 1,
                         width: '100%',
-                        height: '60vh',
+                        height: isBelowMd? '70vh': '60vh',
                         borderRadius: 3,
                         mx: 'auto',
                         display: 'flex',
@@ -358,9 +360,10 @@ const Chat = () => {
                         '&::-webkit-scrollbar': { display: 'none' },
                         scrollbarWidth: 'none',
                         minWidth: 0,
-                        px: { xs: 1, sm: 2 },
+                        px: 0,
                         py: { xs: 0.5, sm: 1 },
-                        gap: { xs: 0.5, sm: 1 }
+                        gap: { xs: 0.5, sm: 1 },
+                        my:2
                     }}>
                     {messages.map((message, index) => (
                         <ChatItem role={message.role} content={message.content} key={index} />
@@ -372,7 +375,7 @@ const Chat = () => {
                     width: "100%",
                     maxWidth: "100%",
                     borderRadius: 8,
-                    p: 2,
+                    p: isBelowMd?1:2,
                     borderColor: "white",
                     backgroundColor: "rgb(17,29,39)",
                     display: "flex",
