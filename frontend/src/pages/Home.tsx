@@ -1,19 +1,20 @@
 import { Box, useMediaQuery, useTheme } from "@mui/material";
 import AnimationText from "../components/typers/AnimationText";
 import Footer from "../components/footer/Footer";
+import MobileGuide from "../components/typers/MobileGuide";
 
 const Home = () => {
   const theme = useTheme();
   const isBelowMd = useMediaQuery(theme.breakpoints.down("md"));
 
   return (
-    <Box 
-      width="100%" 
-      minHeight="100vh" 
-      display="flex" 
+    <Box
+      width="100%"
+      minHeight="100vh"
+      display="flex"
       flexDirection="column"
     >
-      <Box 
+      <Box
         sx={{
           display: "flex",
           width: "100%",
@@ -32,7 +33,7 @@ const Home = () => {
             width: "100%",
             display: "flex",
             justifyContent: "center",
-            flexDirection: isBelowMd? "column": "row",
+            flexDirection: isBelowMd ? "column" : "row",
             gap: 5,
             my: 2,
           }}
@@ -51,7 +52,7 @@ const Home = () => {
             style={{
               width: isBelowMd ? "80px" : "120px",
               margin: "auto",
-              transition: "width 0.3s ease-in-out", 
+              transition: "width 0.3s ease-in-out",
             }}
           />
         </Box>
@@ -76,6 +77,16 @@ const Home = () => {
             }}
           />
         </Box>
+        {isBelowMd && (
+          <Box sx={{
+            width: '100%',
+            mt: 'auto', // Pushes component to bottom
+            py: 2,
+            background: 'linear-gradient(transparent, rgba(0, 0, 0, 0.2))'
+          }}>
+            <MobileGuide />
+          </Box>
+        )}
       </Box>
       <Footer />
     </Box>
