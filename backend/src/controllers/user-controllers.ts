@@ -88,15 +88,12 @@ export const signInUser = async (req: Request, res: Response, next: NextFunction
             });
         }
 
-        // Generate token and set cookie
-        const token = createToken(user._id.toString(), user.email);
-        res.cookie(COOKIE_NAME, token, {
-            path: "/",
-            maxAge: COOKIE_AGE,
-            sameSite: "none",
-            secure: true,
-            httpOnly: true,
-            signed: true,
+        // In signInUser controller, return the token
+        return res.status(200).json({
+            message: "OK",
+            name: user.name,
+            email: user.email,
+            token: token // Send token in response body
         });
 
         console.log("Set the cookie:", COOKIE_NAME);

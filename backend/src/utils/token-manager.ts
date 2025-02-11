@@ -10,25 +10,14 @@ export const createToken = (id:string, email:string)=>{
     return token;
 }
 
-export const verifyToken = async (req:Request, res:Response, next:NextFunction)=>{
-    const token = req.signedCookies[COOKIE_NAME]
-    if(!token || token.trim() === ""){
-        return res.status(401).json({
-            message: "Unauthorized Access, No token found"
-        })
+export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
+    const token = req.headers.authorization?.split(' ')[1]; // Get from Authorization header
+    if (!token) {
+        return res.status(401).json({ message: "Unauthorized" });
     }
-
-    return new Promise<void>((resolve, reject)=>{{
-        return jwt.verify(token, process.env.JWT_SECRET, (err, decoded)=>{
-            if(err){
-                console.log("Error in verify token")
-                return res.status(401).json({
-                    message: "Unauthorized Access"
-                })
-            }
-            resolve();
-            res.locals.jwtData = decoded
-            return next()
-        })
-    }})
-}
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        if (err) return res.status(401).json({ message: "Unauthorized" });
+        res.locals.jwtData = decoded;
+        next();
+    });
+};
