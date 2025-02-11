@@ -11,13 +11,20 @@ export const createToken = (id:string, email:string)=>{
 }
 
 export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization?.split(' ')[1]; // Get from Authorization header
+    const token = req.headers.authorization?.split(' ')[1]; // Get token from Authorization header
     if (!token) {
-        return res.status(401).json({ message: "Unauthorized" });
+        return res.status(401).json({ message: "Unauthorized Access, No token found" });
     }
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-        if (err) return res.status(401).json({ message: "Unauthorized" });
-        res.locals.jwtData = decoded;
-        next();
+
+    return new Promise<void>((resolve, reject) => {
+        jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+            if (err) {
+                console.log("Error in verify token");
+                return res.status(401).json({ message: "Unauthorized Access" });
+            }
+            res.locals.jwtData = decoded; // Attach decoded data to res.locals
+            resolve();
+            next();
+        });
     });
 };

@@ -43,11 +43,16 @@ export const signUpUser = async (req: Request, res: Response, next: NextFunction
 
         const user = new User({ name, email, password: hashedPass });
         await user.save();
+
+        // Generate token and return it in the response
+        const token = createToken(user._id.toString(), user.email);
         return res.status(201).json({
             message: "User created successfully",
             name: user.name,
-            email: user.email
+            email: user.email,
+            token: token // Send token in response body
         });
+
     } catch (error) {
         console.log(error);
         return res.status(500).json({
@@ -88,20 +93,13 @@ export const signInUser = async (req: Request, res: Response, next: NextFunction
             });
         }
 
-        // In signInUser controller, return the token
+        // Generate token and return it in the response
+        const token = createToken(user._id.toString(), user.email);
         return res.status(200).json({
             message: "OK",
             name: user.name,
             email: user.email,
             token: token // Send token in response body
-        });
-
-        console.log("Set the cookie:", COOKIE_NAME);
-
-        return res.status(200).json({
-            message: "OK",
-            name: user.name,
-            email: user.email
         });
 
     } catch (error) {
@@ -169,17 +167,7 @@ export const signOutUser = async (req: Request, res: Response, next: NextFunctio
             });
         }
 
-        // Clear the cookie
-        res.clearCookie(COOKIE_NAME, {
-            path: "/",
-            sameSite: "none",
-            secure: true,
-            httpOnly: true,
-            signed: true,
-        });
-
-        console.log("Cleared the cookie:", COOKIE_NAME);
-
+        // No need to clear cookies anymore
         return res.status(200).json({
             message: "OK",
         });
