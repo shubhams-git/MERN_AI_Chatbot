@@ -7,8 +7,13 @@ const Home = () => {
   const isBelowMd = useMediaQuery(theme.breakpoints.down("md"));
 
   return (
-    <Box width={"100%"} height={"100%"}>
-      <Box
+    <Box 
+      width="100%" 
+      minHeight="100vh" 
+      display="flex" 
+      flexDirection="column"
+    >
+      <Box 
         sx={{
           display: "flex",
           width: "100%",
@@ -16,6 +21,7 @@ const Home = () => {
           alignItems: "center",
           mx: "auto",
           mt: 3,
+          flexGrow: 1,
         }}
       >
         <Box>
@@ -42,7 +48,11 @@ const Home = () => {
             className="rotate"
             src="meta.svg"
             alt="openai"
-            style={{ width: "120px", margin: "auto" }}
+            style={{
+              width: isBelowMd ? "80px" : "120px",
+              margin: "auto",
+              transition: "width 0.3s ease-in-out", 
+            }}
           />
         </Box>
         <Box

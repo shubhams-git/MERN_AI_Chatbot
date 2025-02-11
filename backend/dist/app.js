@@ -5,7 +5,10 @@ config();
 import appRouter from "./routes/index.js";
 import cookieParser from "cookie-parser";
 const app = express();
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+app.use(cors({
+    origin: "https://rizz-bot-ai.vercel.app",
+    credentials: true,
+}));
 app.use(express.json());
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use("/api/v1", appRouter);

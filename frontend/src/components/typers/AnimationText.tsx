@@ -9,9 +9,9 @@ const AnimationText = () => {
         color: 'white',
         textShadow: '1px 1px 20px #000',
         fontSize: {
-          xs: '25px', // Extra-small screens
-          sm: '35px', // Small screens
-          md: '45px', // Medium screens and up
+          xs: '20px', 
+          sm: '30px', 
+          md: '40px',
         },
       }}
     >
@@ -19,12 +19,12 @@ const AnimationText = () => {
         sequence={[
           'Chat with AI, effortlessly.',
           1000,
-          'Your thoughts, our AI. 🖳',
+          'Your thoughts, our AI.',
           1000,
-          'Smooth conversations, smarter replies.',
+          'Switch AI models in real-time.',
           1500,
-          'Powered by open-source, built for you.',
-          2000,
+          'Test. Compare. Chat smarter.',
+          2500,
         ]}
         speed={50}
         repeat={Infinity}

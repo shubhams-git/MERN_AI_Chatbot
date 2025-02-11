@@ -2,7 +2,6 @@ import User from "../models/User.js";
 import { hash, compare } from "bcrypt";
 import { signInSchema, signUpSchema } from "../utils/types.js";
 import { createToken } from "../utils/token-manager.js";
-import { COOKIE_AGE, COOKIE_DOMAIN, COOKIE_NAME } from "../utils/constants.js";
 export const getAllUsers = async (req, res, next) => {
     try {
         const users = await User.find();
@@ -38,10 +37,13 @@ export const signUpUser = async (req, res, next) => {
         const hashedPass = await hash(password, 10);
         const user = new User({ name, email, password: hashedPass });
         await user.save();
+        // Generate token and return it in the response
+        const token = createToken(user._id.toString(), user.email);
         return res.status(201).json({
             message: "User created successfully",
             name: user.name,
-            email: user.email
+            email: user.email,
+            token: token // Send token in response body
         });
     }
     catch (error) {
@@ -79,24 +81,13 @@ export const signInUser = async (req, res, next) => {
                 message: "Unauthorized Access"
             });
         }
-        res.clearCookie(COOKIE_NAME, {
-            path: "/",
-            domain: COOKIE_DOMAIN,
-            httpOnly: true,
-            signed: true
-        });
+        // Generate token and return it in the response
         const token = createToken(user._id.toString(), user.email);
-        res.cookie(COOKIE_NAME, token, {
-            path: "/",
-            domain: COOKIE_DOMAIN,
-            maxAge: COOKIE_AGE,
-            httpOnly: true,
-            signed: true,
-        });
         return res.status(200).json({
             message: "OK",
             name: user.name,
-            email: user.email
+            email: user.email,
+            token: token // Send token in response body
         });
     }
     catch (error) {
@@ -156,13 +147,7 @@ export const signOutUser = async (req, res, next) => {
                 message: "Unauthorized Access- Permissions did not match"
             });
         }
-        res.clearCookie(COOKIE_NAME, {
-            path: "/",
-            domain: COOKIE_DOMAIN,
-            httpOnly: true,
-            signed: true
-        });
-        console.log("Cleared the cookie");
+        // No need to clear cookies anymore
         return res.status(200).json({
             message: "OK",
         });
