@@ -1,5 +1,5 @@
 import axios from "axios"
-axios.defaults.baseURL = "https://mern-ai-chatbot-mp5z.onrender.com/api/v1";
+axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
 
 export const setAuthToken = (token: string | null) => {
     if (token) {

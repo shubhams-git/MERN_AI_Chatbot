@@ -7,7 +7,7 @@ import cookieParser from "cookie-parser";
 
 const app = express()
 app.use(cors({
-    origin: "https://rizz-bot-ai.vercel.app", 
+    origin: process.env.CLIENT_URL, 
     credentials: true,
   }));
 
