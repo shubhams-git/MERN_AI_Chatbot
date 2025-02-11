@@ -31,9 +31,6 @@ const MODELS: Model[] = [
     { id: 'meta-llama/llama-3.3-70b-instruct:free', provider: 'Meta', name: 'Llama 3.3' },
 ];
 
-const theme = useTheme();
-const isBelowMd = useMediaQuery(theme.breakpoints.down("md"));
-
 
 const Chat = () => {
     const auth = useAuth()
@@ -45,7 +42,10 @@ const Chat = () => {
     const [inputRows, setInputRows] = useState(1);
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    
+    const theme = useTheme();
+    const isBelowMd = useMediaQuery(theme.breakpoints.down("md"));
+
+
 
     useLayoutEffect(() => {
         if (auth?.isSignedIn && auth.user) {
@@ -389,9 +389,9 @@ const Chat = () => {
                         sx={{
                             '& .MuiInputBase-root': {
                                 color: 'white',
-                                fontSize: isBelowMd? '0.8rem': '1.1rem',
+                                fontSize: isBelowMd ? '0.8rem' : '1.1rem',
                                 lineHeight: 1.2,
-                                padding: isBelowMd? '3px 5px':'6px 10px', 
+                                padding: isBelowMd ? '3px 5px' : '6px 10px',
                                 overflowY: 'auto',
                                 '& textarea': {
                                     resize: 'vertical',
