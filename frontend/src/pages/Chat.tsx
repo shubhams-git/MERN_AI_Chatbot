@@ -57,6 +57,7 @@ const Chat = () => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const theme = useTheme();
     const isBelowMd = useMediaQuery(theme.breakpoints.down("md"));
+    const isBelowSm = useMediaQuery(theme.breakpoints.down("sm"));
 
     useLayoutEffect(() => {
         if (auth?.isSignedIn && auth.user) {
@@ -296,7 +297,7 @@ const Chat = () => {
                     <FormControl
                         sx={{
                             minWidth: { xs: 200, sm: 250 },
-                            flexGrow: 1,
+                            flexGrow: isBelowSm ? 1 :'auto',
                         }}
                         size="small"
                     >
