@@ -40,9 +40,9 @@ const MODELS: Model[] = [
     { id: 'gemini-2.0-flash-lite-preview-02-05', provider: 'Google', name: 'Gemini Flash Lite 2.0 (Recommended)' },
     { id: 'qwen/qwen2.5-vl-72b-instruct:free', provider: 'Qwen', name: 'Qwen2.5 VL' },
     { id: 'deepseek/deepseek-r1-distill-llama-70b:free', provider: 'DeepSeek', name: 'DeepSeek R1' },
-    { id: 'nvidia/llama-3.1-nemotron-70b-instruct:free', provider: 'NVIDIA', name: 'Llama 3.1' },
-    { id: 'google/gemini-2.0-pro-exp-02-05:free', provider: 'Google', name: 'Gemini Pro 2.0' },
-    { id: 'meta-llama/llama-3.3-70b-instruct:free', provider: 'Meta', name: 'Llama 3.3' },
+    { id: 'mistralai/devstral-small-2505:free', provider: 'Mistral', name: 'Devstral Small' },
+    { id: 'google/gemma-3-27b-it:free', provider: 'Google', name: 'Gemma 3' },
+    { id: 'meta-llama/llama-4-maverick:free', provider: 'Meta', name: 'Llama 4 Maverick' },
 ];
 
 const Chat = () => {
